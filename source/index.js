@@ -2,6 +2,7 @@
 var GameController = require('./GameController');
 var Canvas = require('./Canvas');
 var Menu = require('./Menu');
+var Dashboard = require('./Dashboard');
 
 // The controller will hold all the game flow logic
 var controller = new GameController();
@@ -17,6 +18,9 @@ controller.mainMenu = new Menu(canvas, 'main', 'Blocks', [['play', 'Play']]);
 controller.pauseMenu = new Menu(canvas, 'pause', 'Paused', [['resume', 'Resume']]);
 controller.continueMenu = new Menu(canvas, 'continue', 'Time\'s Up',
     [['continue', 'Next Level']]);
+
+// The controller needs to know about the dashboard
+controller.dashboard = new Dashboard(canvas);
 
 // The controller now knows all about the game, so let's roll!
 controller.initializeGame();

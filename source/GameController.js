@@ -13,8 +13,11 @@ var inherit = require('./utils/inherit');
  * @property {Menu} mainMenu The Menu instance used for the main menu.
  * @property {Menu} pauseMenu The Menu instance used for the pause menu.
  * @property {Menu} continueMenu The Menu instance used for the continue menu.
+ * @property {Dashboard} dashboard The dashboard.
  * @property {boolean} isGameInProgress Whether a game is currently in progress.
  * @property {boolean} isPaused Whether a game is currently paused.
+ * @property {number} score The score of the player.
+ * @property {number} level The current level.
  * @property {number} levelProgress The progress of the current level, number
  *     between 0 and 1.
  * @property {number} levelTime The duration for each level.
@@ -26,9 +29,12 @@ function GameController() {
   this.mainMenu = null;
   this.pauseMenu = null;
   this.continueMenu = null;
+  this.dashboard = null;
 
   this.isGameInProgress = false;
   this.isPaused = false;
+  this.score = 0;
+  this.level = 1;
   this.levelProgress = 0;
   this.levelTime = 60; // In seconds
 }
@@ -44,6 +50,7 @@ GameController.prototype.initializeGame = function() {
 
   this.setupGameEvents();
   this.addMenus();
+  this.addDashboard();
   this.setupKeyEvents();
   this.createTimer();
 
@@ -101,6 +108,56 @@ GameController.prototype.addMenus = function() {
     });
     this.on('stop-level', function() {
       this.continueMenu.show();
+    });
+  }
+};
+
+/**
+ * Add dashboard and attach event handlers.
+ */
+GameController.prototype.addDashboard = function() {
+  var self = this;
+
+  if (this.dashboard) {
+    this.canvas.stage.addChild(this.dashboard.canvasObject);
+    this.on('start-new-game', function() {
+      self.dashboard.setLevel(self.level);
+      self.dashboard.setScore(self.score);
+      self.dashboard.showPauseButton();
+      self.dashboard.showInfo();
+    });
+    this.on('action:start-next-level', function() {
+      self.dashboard.setLevel(self.level);
+      self.dashboard.setScore(self.score);
+    });
+    this.dashboard.on('click-pause-resume', function() {
+      if (!self.isGameInProgress) {
+        self.emit('action:start-next-level');
+      } else if (self.isPaused) {
+        self.emit('action:resume-game');
+      } else {
+        self.emit('pause-game');
+      }
+    });
+    this.on('pause-game', function() {
+      self.dashboard.emit('pause-game');
+    });
+    this.on('stop-level', function() {
+      self.dashboard.emit('stop-level');
+    });
+    this.on('action:start-next-level', function() {
+      self.dashboard.emit('resume-game');
+    });
+    this.on('action:resume-game', function() {
+      self.dashboard.emit('resume-game');
+    });
+
+    this.on('score-increase', function() {
+      self.dashboard.setScore(self.score);
+    });
+
+    this.on('score-decrease', function() {
+      self.dashboard.setScore(self.score);
     });
   }
 };
@@ -201,6 +258,7 @@ GameController.prototype.setupGameEvents = function() {
 
   this.on('action:start-next-level', function() {
     self.resetTimer();
+    self.level++;
     self.isGameInProgress = true;
   });
 
