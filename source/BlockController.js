@@ -191,6 +191,10 @@ BlockController.prototype.onClick = function(block) {
       this.increaseSpeedStep = 0;
       this.increaseBlockSpeed(Math.min(this.level / 4, 1));
     }
+    if (this.createInterval < 1000) {
+      this.createInterval += 50 / this.level;
+      this.startCreateTimer();
+    }
   } else {
     this.emit('dangerblock-click');
   }
