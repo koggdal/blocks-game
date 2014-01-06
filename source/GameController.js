@@ -14,6 +14,7 @@ var inherit = require('./utils/inherit');
  * @property {Menu} pauseMenu The Menu instance used for the pause menu.
  * @property {Menu} continueMenu The Menu instance used for the continue menu.
  * @property {Dashboard} dashboard The dashboard.
+ * @property {GameArea} gameArea The game area.
  * @property {boolean} isGameInProgress Whether a game is currently in progress.
  * @property {boolean} isPaused Whether a game is currently paused.
  * @property {number} score The score of the player.
@@ -30,6 +31,7 @@ function GameController() {
   this.pauseMenu = null;
   this.continueMenu = null;
   this.dashboard = null;
+  this.gameArea = null;
 
   this.isGameInProgress = false;
   this.isPaused = false;
@@ -49,6 +51,7 @@ GameController.prototype.initializeGame = function() {
   }
 
   this.setupGameEvents();
+  this.addGameArea();
   this.addMenus();
   this.addDashboard();
   this.setupKeyEvents();
@@ -158,6 +161,35 @@ GameController.prototype.addDashboard = function() {
 
     this.on('score-decrease', function() {
       self.dashboard.setScore(self.score);
+    });
+  }
+};
+
+/**
+ * Add game area and attach event handlers.
+ */
+GameController.prototype.addGameArea = function() {
+  var self = this;
+
+  if (this.gameArea) {
+    this.canvas.stage.addChild(this.gameArea.canvasObject);
+    this.on('start-new-game', function() {
+      self.gameArea.setDangerZoneSize(self.level / 2 + 0.5);
+    });
+    this.on('action:start-next-level', function() {
+      self.gameArea.setDangerZoneSize(self.level / 2 + 0.5);
+    });
+    this.on('pause-game', function() {
+      self.gameArea.fadeOut();
+    });
+    this.on('stop-level', function() {
+      self.gameArea.fadeOut();
+    });
+    this.on('resume-game', function() {
+      self.gameArea.fadeIn();
+    });
+    this.on('action:start-next-level', function() {
+      self.gameArea.fadeIn();
     });
   }
 };
