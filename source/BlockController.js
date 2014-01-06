@@ -28,8 +28,10 @@ var inherit = require('./utils/inherit');
  * @property {number} dangerZonePosition The position (from the top, in canvas
  *     pixels) where the danger zone starts. If a block is fully inside the
  *     danger zone, it disappears.
- * @property {number} createInterval The interval, in milliseconds, when a new
- *     block is added to the game. After changing this value, call
+ * @property {number} initialCreateInterval The initial interval, in
+ *     milliseconds, when a new block is added to the game.
+ * @property {number} createInterval The current interval, in milliseconds,
+ *     when a new block is added to the game. After changing this value, call
  *     startCreateTimer().
  * @property {number} initialBlockSpeed The speed the block will have initially
  *     when added to the game.
@@ -62,7 +64,8 @@ function BlockController(canvas) {
   this.blockOffset = this.blockSize / (this.numColumns + 1);
   this.blocks = [];
   this.dangerZonePosition = 0;
-  this.createInterval = 1000;
+  this.initialCreateInterval = 1000;
+  this.createInterval = this.initialCreateInterval;
   this.initialBlockSpeed = 2;
   this.maxBlockSpeed = 5;
   this.blockSpeed = this.initialBlockSpeed;
@@ -105,6 +108,7 @@ BlockController.prototype.setLevel = function(level) {
   this.level = level;
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedStep = 0;
+  this.createInterval = this.initialCreateInterval;
 };
 
 /**
