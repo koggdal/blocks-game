@@ -71,7 +71,7 @@ GameController.prototype.initializeGame = function() {
     var self = this;
     setTimeout(function() {
       self.mainMenu.show();
-    }, 500);
+    }, 1000);
   }
 };
 
@@ -241,10 +241,18 @@ GameController.prototype.addBlockController = function() {
     });
 
     this.blockController.on('scoreblock-click', function() {
-      self.emit('score-increase', {amount: 10});
+      if (self.canvas.isTouch) {
+        self.emit('score-increase', {amount: 10});
+      } else {
+        self.emit('score-increase', {amount: 15});
+      }
     });
     this.blockController.on('dangerblock-click', function() {
-      self.emit('score-decrease', {amount: 20});
+      if (self.canvas.isTouch) {
+        self.emit('score-decrease', {amount: 100});
+      } else {
+        self.emit('score-decrease', {amount: 150});
+      }
     });
   }
 };

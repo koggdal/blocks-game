@@ -31,8 +31,7 @@ var inherit = require('./utils/inherit');
  * @property {number} initialCreateInterval The initial interval, in
  *     milliseconds, when a new block is added to the game.
  * @property {number} createInterval The current interval, in milliseconds,
- *     when a new block is added to the game. After changing this value, call
- *     startCreateTimer().
+ *     when a new block is added to the game.
  * @property {number} initialBlockSpeedConst The speed the block will have
  *     initially when the game is launched. Will not change.
  * @property {number} initialBlockSpeed The speed the block will have initially
@@ -66,11 +65,11 @@ function BlockController(canvas) {
   this.blockOffset = this.blockSize / (this.numColumns + 1);
   this.blocks = [];
   this.dangerZonePosition = 0;
-  this.initialCreateInterval = 1000;
+  this.initialCreateInterval = this.canvas.isTouch ? 700 : 900;
   this.createInterval = this.initialCreateInterval;
   this.initialBlockSpeedConst = 2;
   this.initialBlockSpeed = this.initialBlockSpeedConst;
-  this.maxBlockSpeed = 5;
+  this.maxBlockSpeed = this.canvas.isTouch ? 7 : 5;
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedEvery = 2;
   this.increaseSpeedStep = 0;
@@ -109,7 +108,13 @@ inherit(BlockController, EventEmitter);
  */
 BlockController.prototype.setLevel = function(level) {
   this.level = level;
-  this.initialBlockSpeed = this.initialBlockSpeedConst + level * 0.5;
+  var speedConst = this.initialBlockSpeedConst;
+  var max = this.maxBlockSpeed;
+  if (this.canvas.isTouch) {
+    this.initialBlockSpeed = Math.min(speedConst + level * 0.75, max);
+  } else {
+    this.initialBlockSpeed = Math.min(speedConst + level * 0.4, max);
+  }
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedStep = 0;
   this.createInterval = this.initialCreateInterval;
@@ -145,7 +150,7 @@ BlockController.prototype.createBlockAreaObject = function() {
  */
 BlockController.prototype.addBlock = function() {
   var dpr = this.canvas.dpr;
-  var isScoreBlock = this.getRandomInt(0, 10) % 3 ? true : false;
+  var isScoreBlock = this.getRandomInt(0, 10) % 6 ? true : false;
   var object = isScoreBlock ? this.scorePool.get() : this.dangerPool.get();
 
   var column;
@@ -193,11 +198,21 @@ BlockController.prototype.onClick = function(block) {
     this.emit('scoreblock-click');
     if (++this.increaseSpeedStep === this.increaseSpeedEvery) {
       this.increaseSpeedStep = 0;
-      this.increaseBlockSpeed(Math.min(this.level / 4, 1));
+      if (this.canvas.isTouch) {
+        this.increaseBlockSpeed(Math.min(this.level / 4, 2));
+      } else {
+        this.increaseBlockSpeed(Math.min(this.level / 4, 2));
+      }
     }
-    if (this.createInterval < 1000) {
-      this.createInterval += 50 / this.level;
-      this.startCreateTimer();
+    var min, val;
+    if (this.canvas.isTouch) {
+      min = 500 - this.level * 20;
+      val = this.createInterval - this.level * this.level * 2.5;
+      this.createInterval = Math.max(val, min);
+    } else {
+      min = 700 - this.level * 10;
+      val = this.createInterval - this.level * this.level * 2.5;
+      this.createInterval = Math.max(val, min);
     }
   } else {
     this.emit('dangerblock-click');
@@ -255,8 +270,8 @@ BlockController.prototype.stopGame = function() {
  */
 BlockController.prototype.startCreateTimer = function() {
   var self = this;
-  this.stopCreateTimer();
-  this.objectCreateTimer = setInterval(function() {
+  this.objectCreateTimer = setTimeout(function() {
+    self.startCreateTimer();
     self.addBlock();
   }, this.createInterval);
 };
@@ -265,7 +280,7 @@ BlockController.prototype.startCreateTimer = function() {
  * Stop the timer that adds new blocks to the game.
  */
 BlockController.prototype.stopCreateTimer = function() {
-  clearInterval(this.objectCreateTimer);
+  clearTimeout(this.objectCreateTimer);
 };
 
 /**
@@ -299,7 +314,9 @@ BlockController.prototype.endLevel = function() {
  * @param {number} amount The amount to increase with.
  */
 BlockController.prototype.increaseBlockSpeed = function(amount) {
-  this.blockSpeed = Math.min(this.blockSpeed + amount, this.maxBlockSpeed);
+  var max = this.maxBlockSpeed;
+  if (this.level < 5) max = this.maxBlockSpeed / 1.5;
+  this.blockSpeed = Math.min(this.blockSpeed + amount, max);
 };
 
 /**

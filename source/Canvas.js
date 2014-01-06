@@ -37,6 +37,8 @@ function Canvas(element) {
 
   this.setSize(this.element.width, this.element.height);
   this.createStage();
+
+  this.isTouch = this.stage.touch.isTouch;
 }
 
 /**
