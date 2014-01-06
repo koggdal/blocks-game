@@ -1,0 +1,22 @@
+// Imports
+var GameController = require('./GameController');
+var Canvas = require('./Canvas');
+var Menu = require('./Menu');
+
+// The controller will hold all the game flow logic
+var controller = new GameController();
+
+// Tell the controller about the canvas where the game is rendered
+var canvas = controller.canvas = new Canvas('#canvas');
+
+// Create the three menus needed in the game:
+// mainMenu: Displayed when the game is launched.
+// pauseMenu: Displayed when the game is paused.
+// continue: Displayed when the time is up for a level.
+controller.mainMenu = new Menu(canvas, 'main', 'Blocks', [['play', 'Play']]);
+controller.pauseMenu = new Menu(canvas, 'pause', 'Paused', [['resume', 'Resume']]);
+controller.continueMenu = new Menu(canvas, 'continue', 'Time\'s Up',
+    [['continue', 'Next Level']]);
+
+// The controller now knows all about the game, so let's roll!
+controller.initializeGame();
