@@ -15,6 +15,9 @@ var inherit = require('./utils/inherit');
  * @property {Menu} continueMenu The Menu instance used for the continue menu.
  * @property {boolean} isGameInProgress Whether a game is currently in progress.
  * @property {boolean} isPaused Whether a game is currently paused.
+ * @property {number} levelProgress The progress of the current level, number
+ *     between 0 and 1.
+ * @property {number} levelTime The duration for each level.
  */
 function GameController() {
   EventEmitter.call(this);
@@ -26,6 +29,8 @@ function GameController() {
 
   this.isGameInProgress = false;
   this.isPaused = false;
+  this.levelProgress = 0;
+  this.levelTime = 60; // In seconds
 }
 inherit(GameController, EventEmitter);
 
@@ -40,6 +45,7 @@ GameController.prototype.initializeGame = function() {
   this.setupGameEvents();
   this.addMenus();
   this.setupKeyEvents();
+  this.createTimer();
 
   if (this.mainMenu) {
     // Use a timer to let the font load
@@ -100,6 +106,56 @@ GameController.prototype.addMenus = function() {
 };
 
 /**
+ * Create the level timer and add some methods for the timer.
+ */
+GameController.prototype.createTimer = function() {
+  var self = this;
+  var startTime = null;
+  var lastTime = null;
+  var rafID;
+
+  this.startTimer = function() {
+    startTime = null;
+    self.levelProgress = 0;
+    rafID = requestAnimationFrame(timerTick);
+  };
+  this.stopTimer = function() {
+    if (rafID) cancelAnimationFrame(rafID);
+  };
+  this.resumeTimer = function() {
+    rafID = requestAnimationFrame(function(timestamp) {
+      startTime += timestamp - lastTime;
+      rafID = requestAnimationFrame(timerTick);
+    });
+  };
+  this.resetTimer = function() {
+    self.levelProgress = 0;
+    if (self.dashboard) {
+      self.dashboard.setTimerProgress(0);
+    }
+  };
+
+  function timerTick(timestamp) {
+    if (timestamp && !startTime) startTime = timestamp;
+    lastTime = timestamp;
+    var timeSince = timestamp - startTime;
+    var progress = timeSince / (self.levelTime * 1000);
+
+    rafID = requestAnimationFrame(timerTick);
+    self.levelProgress = progress;
+
+    if (self.dashboard) {
+      self.dashboard.setTimerProgress(progress);
+    }
+
+    if (progress >= 1) {
+      self.stopTimer();
+      self.emit('stop-level');
+    }
+  }
+};
+
+/**
  * Set up key events for pause etc.
  */
 GameController.prototype.setupKeyEvents = function() {
@@ -126,14 +182,17 @@ GameController.prototype.setupGameEvents = function() {
 
   this.on('pause-game', function() {
     self.isPaused = true;
+    self.stopTimer();
   });
 
   this.on('resume-game', function() {
     self.isPaused = false;
+    self.resumeTimer();
   });
 
   this.on('start-new-game', function() {
     self.isGameInProgress = true;
+    self.startTimer();
   });
 
   this.on('stop-level', function() {
@@ -141,7 +200,12 @@ GameController.prototype.setupGameEvents = function() {
   });
 
   this.on('action:start-next-level', function() {
+    self.resetTimer();
     self.isGameInProgress = true;
+  });
+
+  this.on('start-next-level', function() {
+    self.startTimer();
   });
 };
 
