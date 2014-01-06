@@ -69,7 +69,7 @@ function BlockController(canvas) {
   this.initialBlockSpeed = 2;
   this.maxBlockSpeed = 5;
   this.blockSpeed = this.initialBlockSpeed;
-  this.increaseSpeedEvery = 5;
+  this.increaseSpeedEvery = 2;
   this.increaseSpeedStep = 0;
 
   this.scorePool = new Pool();
