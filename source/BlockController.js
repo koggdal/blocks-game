@@ -33,6 +33,8 @@ var inherit = require('./utils/inherit');
  * @property {number} createInterval The current interval, in milliseconds,
  *     when a new block is added to the game. After changing this value, call
  *     startCreateTimer().
+ * @property {number} initialBlockSpeedConst The speed the block will have
+ *     initially when the game is launched. Will not change.
  * @property {number} initialBlockSpeed The speed the block will have initially
  *     when added to the game.
  * @property {number} blockSpeed The speed the blocks currently have.
@@ -66,7 +68,8 @@ function BlockController(canvas) {
   this.dangerZonePosition = 0;
   this.initialCreateInterval = 1000;
   this.createInterval = this.initialCreateInterval;
-  this.initialBlockSpeed = 2;
+  this.initialBlockSpeedConst = 2;
+  this.initialBlockSpeed = this.initialBlockSpeedConst;
   this.maxBlockSpeed = 5;
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedEvery = 2;
@@ -106,7 +109,7 @@ inherit(BlockController, EventEmitter);
  */
 BlockController.prototype.setLevel = function(level) {
   this.level = level;
-  this.initialBlockSpeed += 0.5;
+  this.initialBlockSpeed = this.initialBlockSpeedConst + level * 0.5;
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedStep = 0;
   this.createInterval = this.initialCreateInterval;
