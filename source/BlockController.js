@@ -17,6 +17,7 @@ var inherit = require('./utils/inherit');
  * @property {Object} canvasObject An oCanvas wrapper object for the blocks.
  * @property {number} level The current level.
  * @property {number} numColumns The number of columns to render blocks in.
+ * @property {number} lastColumn The number of the last column to get a block.
  * @property {number} blockSize The size of a square block, in CSS pixels.
  *     This property is set automatically based on the number of columns,
  *     calculated to fit the width of the game area.
@@ -55,6 +56,7 @@ function BlockController(canvas) {
 
   this.level = 1;
   this.numColumns = 6;
+  this.lastColumn = 1;
   this.blockSize = (canvas.stage.width / canvas.dpr) / (this.numColumns + 1);
   this.blockOffset = this.blockSize / (this.numColumns + 1);
   this.blocks = [];
@@ -136,7 +138,11 @@ BlockController.prototype.addBlock = function() {
   var isScoreBlock = this.getRandomInt(0, 10) % 3 ? true : false;
   var object = isScoreBlock ? this.scorePool.get() : this.dangerPool.get();
 
-  var column = this.getRandomInt(1, this.numColumns);
+  var column;
+  while (!column || column === this.lastColumn) {
+    column = this.getRandomInt(1, this.numColumns);
+  }
+  this.lastColumn = column;
   
   var x = (column * this.blockOffset + (column - 1) * this.blockSize) * dpr;
   var y = -object.size;
