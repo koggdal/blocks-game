@@ -1,0 +1,16 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	background: black;
+}
+
+canvas {
+	margin: 0 auto;
+	position: relative;
+	top: 50%;
+	margin-top: -274px;
+	display: block;
+}
