@@ -28,7 +28,7 @@ function GameArea(canvas) {
   EventEmitter.call(this);
 
   this.canvas = canvas;
-  this.dangerZoneStepSize = 40;
+  this.dangerZoneStepSize = 60;
   this.dangerZonePosition = 0;
   this.canvasObject = this.createGameAreaObject();
   this.blockArea = this.createBlockAreaObject();
