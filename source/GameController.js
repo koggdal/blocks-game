@@ -214,6 +214,7 @@ GameController.prototype.addBlockController = function() {
       this.gameArea.blockArea.addChild(this.blockController.canvasObject);
     }
     this.on('start-new-game', function() {
+      this.blockController.setLevel(self.level);
       if (this.gameArea) {
         var position = this.gameArea.dangerZonePosition;
         this.blockController.setDangerZonePosition(position);
