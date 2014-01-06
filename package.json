@@ -1,0 +1,11 @@
+{
+  "name": "blocks",
+  "version": "0.1.0",
+  "description": "",
+  "main": "source/index.js",
+  "author": "Johannes Koggdal",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-exec": "~0.4.3"
+  }
+}
