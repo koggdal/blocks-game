@@ -34,6 +34,7 @@ var inherit = require('./utils/inherit');
  * @property {number} initialBlockSpeed The speed the block will have initially
  *     when added to the game.
  * @property {number} blockSpeed The speed the blocks currently have.
+ * @property {number} maxBlockSpeed The maximum block speed.
  * @property {number} increaseSpeedEvery Every n number of times the player
  *     captures a score block, the speed will increase slightly.
  * @property {number} increaseSpeedStep The current step towards
@@ -63,6 +64,7 @@ function BlockController(canvas) {
   this.dangerZonePosition = 0;
   this.createInterval = 1000;
   this.initialBlockSpeed = 2;
+  this.maxBlockSpeed = 5;
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedEvery = 5;
   this.increaseSpeedStep = 0;
@@ -89,7 +91,7 @@ function BlockController(canvas) {
   });
 
   this.on('scoreblock-reach-end', function() {
-    self.blockSpeed += 0.2;
+    self.increaseBlockSpeed(0.2);
   });
 }
 inherit(BlockController, EventEmitter);
@@ -183,7 +185,7 @@ BlockController.prototype.onClick = function(block) {
     this.emit('scoreblock-click');
     if (++this.increaseSpeedStep === this.increaseSpeedEvery) {
       this.increaseSpeedStep = 0;
-      this.blockSpeed += Math.min(this.level / 5, 1);
+      this.increaseBlockSpeed(Math.min(this.level / 4, 1));
     }
   } else {
     this.emit('dangerblock-click');
@@ -276,6 +278,16 @@ BlockController.prototype.endLevel = function() {
       i--; l--;
     }
   }, 1000);
+};
+
+/**
+ * Increase the block speed by a certain amount.
+ * This will respect the `maxBlockSpeed` setting.
+ *
+ * @param {number} amount The amount to increase with.
+ */
+BlockController.prototype.increaseBlockSpeed = function(amount) {
+  this.blockSpeed = Math.min(this.blockSpeed + amount, this.maxBlockSpeed);
 };
 
 /**
