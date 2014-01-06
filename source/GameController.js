@@ -46,7 +46,7 @@ function GameController() {
   this.level = 1;
   this.levelProgress = 0;
 
-  this.levelTime = 60; // In seconds
+  this.levelTime = 30; // In seconds
 }
 inherit(GameController, EventEmitter);
 
