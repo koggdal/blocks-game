@@ -70,12 +70,12 @@ function BlockController(canvas) {
 
   this.scorePool.createFunction = function() {
     var block = new ScoreBlock(canvas, self.blockSize);
-    block.canvasObject.bind('click tap', function() { self.onClick(block); });
+    block.canvasObject.bind('mousedown touchstart', function() { self.onClick(block); });
     return block;
   };
   this.dangerPool.createFunction = function() {
     var block = new DangerBlock(canvas, self.blockSize);
-    block.canvasObject.bind('click tap', function() { self.onClick(block); });
+    block.canvasObject.bind('mousedown touchstart', function() { self.onClick(block); });
     return block;
   };
 
