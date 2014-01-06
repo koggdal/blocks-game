@@ -15,6 +15,7 @@ var inherit = require('./utils/inherit');
  * @property {Menu} continueMenu The Menu instance used for the continue menu.
  * @property {Dashboard} dashboard The dashboard.
  * @property {GameArea} gameArea The game area.
+ * @property {BlockController} blockController The controller for all blocks.
  * @property {boolean} isGameInProgress Whether a game is currently in progress.
  * @property {boolean} isPaused Whether a game is currently paused.
  * @property {number} score The score of the player.
@@ -32,12 +33,14 @@ function GameController() {
   this.continueMenu = null;
   this.dashboard = null;
   this.gameArea = null;
+  this.blockController = null;
 
   this.isGameInProgress = false;
   this.isPaused = false;
   this.score = 0;
   this.level = 1;
   this.levelProgress = 0;
+
   this.levelTime = 60; // In seconds
 }
 inherit(GameController, EventEmitter);
@@ -54,6 +57,7 @@ GameController.prototype.initializeGame = function() {
   this.addGameArea();
   this.addMenus();
   this.addDashboard();
+  this.addBlockController();
   this.setupKeyEvents();
   this.createTimer();
 
@@ -195,6 +199,51 @@ GameController.prototype.addGameArea = function() {
 };
 
 /**
+ * Add block controller and attach event handlers.
+ */
+GameController.prototype.addBlockController = function() {
+  var self = this;
+
+  if (this.blockController) {
+    if (this.gameArea) {
+      this.gameArea.blockArea.addChild(this.blockController.canvasObject);
+    }
+    this.on('start-new-game', function() {
+      if (this.gameArea) {
+        var position = this.gameArea.dangerZonePosition;
+        this.blockController.setDangerZonePosition(position);
+      }
+      this.blockController.startGame();
+    });
+    this.on('start-next-level', function() {
+      this.blockController.setLevel(self.level);
+      if (self.gameArea) {
+        var position = self.gameArea.dangerZonePosition;
+        this.blockController.setDangerZonePosition(position);
+      }
+      this.blockController.startGame();
+    });
+    this.on('pause-game', function() {
+      this.blockController.stopGame();
+    });
+    this.on('stop-level', function() {
+      this.blockController.stopGame();
+      this.blockController.endLevel();
+    });
+    this.on('resume-game', function() {
+      this.blockController.startGame();
+    });
+
+    this.blockController.on('scoreblock-click', function() {
+      self.emit('score-increase', {amount: 10});
+    });
+    this.blockController.on('dangerblock-click', function() {
+      self.emit('score-decrease', {amount: 20});
+    });
+  }
+};
+
+/**
  * Create the level timer and add some methods for the timer.
  */
 GameController.prototype.createTimer = function() {
@@ -296,6 +345,14 @@ GameController.prototype.setupGameEvents = function() {
 
   this.on('start-next-level', function() {
     self.startTimer();
+  });
+
+  this.on('score-increase', function(event) {
+    self.score += event.amount;
+  });
+
+  this.on('score-decrease', function(event) {
+    self.score = Math.max(0, self.score - event.amount);
   });
 };
 

@@ -4,6 +4,7 @@ var Canvas = require('./Canvas');
 var Menu = require('./Menu');
 var Dashboard = require('./Dashboard');
 var GameArea = require('./GameArea');
+var BlockController = require('./BlockController');
 
 // The controller will hold all the game flow logic
 var controller = new GameController();
@@ -25,6 +26,9 @@ controller.dashboard = new Dashboard(canvas);
 
 // The controller needs to know about the game area
 controller.gameArea = new GameArea(canvas);
+
+// The controller needs to know about the block controller to spawn new blocks
+controller.blockController = new BlockController(canvas);
 
 // The controller now knows all about the game, so let's roll!
 controller.initializeGame();
