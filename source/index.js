@@ -17,7 +17,8 @@ var canvas = controller.canvas = new Canvas('#canvas');
 // pauseMenu: Displayed when the game is paused.
 // continue: Displayed when the time is up for a level.
 controller.mainMenu = new Menu(canvas, 'main', 'Blocks', [['play', 'Play']]);
-controller.pauseMenu = new Menu(canvas, 'pause', 'Paused', [['resume', 'Resume']]);
+controller.pauseMenu = new Menu(canvas, 'pause', 'Paused',
+	[['resume', 'Resume']]);
 controller.continueMenu = new Menu(canvas, 'continue', 'Time\'s Up',
     [['continue', 'Next Level']]);
 

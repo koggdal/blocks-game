@@ -37,7 +37,8 @@ function Pool(opt_properties) {
   this.refillAmount = 10;
 
   this.createFunction = function() {
-    throw new Error('You need to set the `createFunction` property to a function.');
+    var msg = 'You need to set the `createFunction` property to a function.';
+    throw new Error(msg);
   };
 
   if (opt_properties) {

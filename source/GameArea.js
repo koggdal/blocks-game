@@ -78,7 +78,8 @@ GameArea.prototype.createDangerZoneObject = function() {
   var stage = canvas.stage;
   var dpr = canvas.dpr;
   var gameArea = this.canvasObject;
-  var dangerColors = this.generateStripedGradientColors(50, '#999', '#000').join(', ');
+  var dangerColors = this.generateStripedGradientColors(50, '#999','#000');
+  dangerColors = dangerColors.join(', ');
 
   var object = stage.display.rectangle({
     width: stage.width,
@@ -138,25 +139,26 @@ GameArea.prototype.fadeOut = function() {
  * Generate a striped gradient.
  *
  * @param {number} stripes The number of stripes.
- * @param {} color1 The first color.
- * @param {} color2 The second color.
+ * @param {string} c1 The first color.
+ * @param {string} c2 The second color.
+ *
  * @return {Array.<string>} An array of color values (with positions). These
  *     can be used in a gradient syntax, by joining the array values with ', '.
  */
-GameArea.prototype.generateStripedGradientColors = function(stripes, color1, color2) {
+GameArea.prototype.generateStripedGradientColors = function(stripes, c1, c2) {
   var colors = [];
 
   var colorSize = 100 / stripes;
-  color1 = color1 || 'white';
-  color2 = color2 || 'black';
+  c1 = c1 || 'white';
+  c2 = c2 || 'black';
 
   for (var i = 0, l = stripes; i < l; i++) {
     if (i % 2) {
-      colors.push(color1 + ' ' + (i * colorSize) + '%');
-      colors.push(color1 + ' ' + ((i + 1) * colorSize) + '%');
+      colors.push(c1 + ' ' + (i * colorSize) + '%');
+      colors.push(c1 + ' ' + ((i + 1) * colorSize) + '%');
     } else {
-      colors.push(color2 + ' ' + (i * colorSize) + '%');
-      colors.push(color2 + ' ' + ((i + 1) * colorSize) + '%');
+      colors.push(c2 + ' ' + (i * colorSize) + '%');
+      colors.push(c2 + ' ' + ((i + 1) * colorSize) + '%');
     }
   }
 
