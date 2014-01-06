@@ -106,6 +106,7 @@ inherit(BlockController, EventEmitter);
  */
 BlockController.prototype.setLevel = function(level) {
   this.level = level;
+  this.initialBlockSpeed += 0.5;
   this.blockSpeed = this.initialBlockSpeed;
   this.increaseSpeedStep = 0;
   this.createInterval = this.initialCreateInterval;
