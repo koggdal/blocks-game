@@ -9,14 +9,15 @@ var inherit = require('./utils/inherit');
 /**
  * @classdesc Block class for rendering a normal block.
  *
- * @property {Canvas} canvas The Canvas instance used for rendering.
+ * @property {module:Canvas~Canvas} canvas The Canvas instance used for
+ *     rendering.
  * @property {number} size The size of the square block, in CSS pixels.
  * @property {Object} canvasObject An oCanvas object for the block.
  *
  * @constructor
- * @augments {EventEmitter}
+ * @augments {module:EventEmitter~EventEmitter}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  * @param {number} size The size in CSS pixels.
  */
 function Block(canvas, size) {

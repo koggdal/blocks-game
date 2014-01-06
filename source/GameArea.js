@@ -9,7 +9,8 @@ var inherit = require('./utils/inherit');
 /**
  * @classdesc Game area class for rendering the game area.
  *
- * @property {Canvas} canvas The Canvas instance used for rendering.
+ * @property {module:Canvas~Canvas} canvas The Canvas instance used for
+ *     rendering.
  * @property {number} dangerZoneStepSize The size which the danger zone will
  *     increase with for each level.
  * @property {number} dangerZonePosition The position (from the top, in canvas
@@ -19,9 +20,9 @@ var inherit = require('./utils/inherit');
  * @property {Object} dangerZone An oCanvas object for the danger zone.
  *
  * @constructor
- * @augments {EventEmitter}
+ * @augments {module:EventEmitter~EventEmitter}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  */
 function GameArea(canvas) {
   EventEmitter.call(this);

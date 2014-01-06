@@ -10,9 +10,9 @@ var inherit = require('./utils/inherit');
  * @classdesc Score block class for rendering a score block.
  *
  * @constructor
- * @augments {Block}
+ * @augments {module:Block~Block}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  * @param {number} size The size in CSS pixels.
  */
 function ScoreBlock(canvas, size) {

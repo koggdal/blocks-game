@@ -9,7 +9,8 @@ var inherit = require('./utils/inherit');
 /**
  * @classdesc Dashboard class for rendering game play information.
  *
- * @property {Canvas} canvas The Canvas instance used for rendering.
+ * @property {module:Canvas~Canvas} canvas The Canvas instance used for
+ *     rendering.
  * @property {number} height The height of the dashboard, in canvas pixels.
  * @property {Object} canvasObject The oCanvas object for the dashboard.
  * @property {Object} pauseButton The oCanvas object for the pause button.
@@ -19,9 +20,9 @@ var inherit = require('./utils/inherit');
  * @property {number} totalTime The total time for a level, used by the timer.
  *
  * @constructor
- * @augments {EventEmitter}
+ * @augments {module:EventEmitter~EventEmitter}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  */
 function Dashboard(canvas) {
   EventEmitter.call(this);

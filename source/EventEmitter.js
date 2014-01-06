@@ -52,7 +52,8 @@ EventEmitter.prototype.off = function(events, listener) {
  * Emit one or more events and fire all the listener functions.
  *
  * @param {string} events Event names. If many, separated by space.
- * @param {Object=} opt_eventObject Object that gets sent to the listener function.
+ * @param {Object=} opt_eventObject Object that gets sent to the listener
+ *     function.
  */
 EventEmitter.prototype.emit = function(events, opt_eventObject) {
   events = events.split(' ');

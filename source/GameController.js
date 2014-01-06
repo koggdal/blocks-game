@@ -9,13 +9,18 @@ var inherit = require('./utils/inherit');
 /**
  * @classdesc Game controller that handles all game logic.
  *
- * @property {Canvas} canvas The Canvas instance used for rendering.
- * @property {Menu} mainMenu The Menu instance used for the main menu.
- * @property {Menu} pauseMenu The Menu instance used for the pause menu.
- * @property {Menu} continueMenu The Menu instance used for the continue menu.
- * @property {Dashboard} dashboard The dashboard.
- * @property {GameArea} gameArea The game area.
- * @property {BlockController} blockController The controller for all blocks.
+ * @property {module:Canvas~Canvas} canvas The Canvas instance used for
+ *     rendering.
+ * @property {module:Menu~Menu} mainMenu The Menu instance used for the main
+ *     menu.
+ * @property {module:Menu~Menu} pauseMenu The Menu instance used for the pause
+ *     menu.
+ * @property {module:Menu~Menu} continueMenu The Menu instance used for the
+ *     continue menu.
+ * @property {module:Dashboard~Dashboard} dashboard The dashboard.
+ * @property {module:GameArea~GameArea} gameArea The game area.
+ * @property {module:BlockController~BlockController} blockController The
+ *     controller for all blocks.
  * @property {boolean} isGameInProgress Whether a game is currently in progress.
  * @property {boolean} isPaused Whether a game is currently paused.
  * @property {number} score The score of the player.

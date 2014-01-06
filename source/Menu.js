@@ -9,7 +9,8 @@ var inherit = require('./utils/inherit');
 /**
  * @classdesc Menu class for rendering a menu with a title and clickable items.
  *
- * @property {Canvas} canvas The Canvas instance used for rendering.
+ * @property {module:Canvas~Canvas} canvas The Canvas instance used for
+ *     rendering.
  * @property {string} id The menu ID.
  * @property {string} title The title for the menu.
  * @property {Array.<Array>} items An array of items. Each item is an array
@@ -22,9 +23,9 @@ var inherit = require('./utils/inherit');
  * @property {boolean} isAnimating Whether the menu is currently animating.
  *
  * @constructor
- * @augments {EventEmitter}
+ * @augments {module:EventEmitter~EventEmitter}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  * @param {string} id An ID for the menu.
  * @param {string} title The large title for the menu.
  * @param {Array.<string>} items Array of menu item labels.

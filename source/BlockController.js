@@ -12,7 +12,8 @@ var inherit = require('./utils/inherit');
 /**
  * @classdesc Block controller class for controlling blocks in the game.
  *
- * @property {Canvas} canvas The Canvas instance used for rendering.
+ * @property {module:Canvas~Canvas} canvas The Canvas instance used for
+ *     rendering.
  * @property {Object} canvasObject An oCanvas wrapper object for the blocks.
  * @property {number} level The current level.
  * @property {number} numColumns The number of columns to render blocks in.
@@ -21,8 +22,8 @@ var inherit = require('./utils/inherit');
  *     calculated to fit the width of the game area.
  * @property {number} blockOffset The offset for every column, to give some
  *     spacing between the blocks.
- * @property {Array.<Block>} blocks An array of blocks that are currently
- *     active in the game.
+ * @property {Array.<module:Block~Block>} blocks An array of blocks that are
+ *     currently active in the game.
  * @property {number} dangerZonePosition The position (from the top, in canvas
  *     pixels) where the danger zone starts. If a block is fully inside the
  *     danger zone, it disappears.
@@ -36,13 +37,13 @@ var inherit = require('./utils/inherit');
  *     captures a score block, the speed will increase slightly.
  * @property {number} increaseSpeedStep The current step towards
  *     increaseSpeedEvery.
- * @property {Pool} scorePool A pool of score blocks.
- * @property {Pool} dangerPool A pool of danger blocks.
+ * @property {module:Pool~Pool} scorePool A pool of score blocks.
+ * @property {module:Pool~Pool} dangerPool A pool of danger blocks.
  *
  * @constructor
- * @augments {EventEmitter}
+ * @augments {module:EventEmitter~EventEmitter}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  */
 function BlockController(canvas) {
   EventEmitter.call(this);
@@ -150,7 +151,7 @@ BlockController.prototype.addBlock = function() {
 /**
  * Remove a block from the game.
  *
- * @param {Block} block A Block instance.
+ * @param {module:Block~Block} block A Block instance.
  * @param {number=} opt_index Index within the `blocks` array.
  */
 BlockController.prototype.removeBlock = function(block, opt_index) {
@@ -169,7 +170,7 @@ BlockController.prototype.removeBlock = function(block, opt_index) {
 /**
  * The click handler when a block is clicked.
  *
- * @param {Block} block A Block instance.
+ * @param {module:Block~Block} block A Block instance.
  */
 BlockController.prototype.onClick = function(block) {
   if (block instanceof ScoreBlock) {

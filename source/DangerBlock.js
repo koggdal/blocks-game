@@ -10,9 +10,9 @@ var inherit = require('./utils/inherit');
  * @classdesc Danger block class for rendering a dangerous block.
  *
  * @constructor
- * @augments {Block}
+ * @augments {module:Block~Block}
  *
- * @param {Canvas} canvas A Canvas instance.
+ * @param {module:Canvas~Canvas} canvas A Canvas instance.
  * @param {number} size The size in CSS pixels.
  */
 function DangerBlock(canvas, size) {
