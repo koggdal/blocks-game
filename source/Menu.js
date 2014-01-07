@@ -43,7 +43,14 @@ function Menu(canvas, id, title, items) {
   this.isAnimating = false;
 
   for (var i = 0, l = items.length; i < l; i++) {
-    this.itemObjects.push(this.createItemObject(items[i][0], items[i][1], i));
+    var item = items[i];
+    this.itemObjects.push(this.createItemObject(i, {
+      id: item[0],
+      label: item[1],
+      fill: item[2],
+      fillHighlight: item[3],
+      offset: item[4]
+    }));
   }
 }
 inherit(Menu, EventEmitter);
@@ -92,27 +99,31 @@ Menu.prototype.createTitleObject = function() {
 /**
  * Create a renderable object for a menu item.
  *
- * @param {string} id The menu item ID.
- * @param {string} label The menu item label.
  * @param {number} index The index within the menu list.
+ * @param {Object} options Object with options.
  *
  * @return {Object} An oCanvas object for the menu item.
  */
-Menu.prototype.createItemObject = function(id, label, index) {
+Menu.prototype.createItemObject = function(index, options) {
   var canvas = this.canvas;
   var stage = canvas.stage;
   var dpr = canvas.dpr;
   var menu = this.canvasObject;
+
+  var id = options.id;
+  var label = options.label;
+  var fill = options.fill || '#222';
+  var fillHighlight = options.fillHighlight || '#444';
   var itemHeight = 50;
-  var itemOffset = 10;
+  var itemOffset = options.offset || 10;
 
   var object = stage.display.rectangle({
     x: menu.width / 2,
-    y: menu.height / 2 + index * (itemHeight + itemOffset),
+    y: menu.height / 2 + index * (itemHeight + itemOffset) * dpr,
     width: menu.width / 2,
     height: itemHeight * dpr,
     origin: {x: 'center', y: 'center'},
-    fill: '#222'
+    fill: fill
   });
 
   var text = stage.display.text({
@@ -135,14 +146,14 @@ Menu.prototype.createItemObject = function(id, label, index) {
   object.bind('mousedown touchstart', function() {
     if (self.isAnimating) return;
     pressed = true;
-    this.fill = '#444';
+    this.fill = fillHighlight;
     canvas.requestRender();
   });
   stage.bind('mouseup touchend', function() {
     if (self.isAnimating) return;
     if (!pressed) return;
     pressed = false;
-    object.fill = '#222';
+    object.fill = fill;
     canvas.requestRender();
   });
 
