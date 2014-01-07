@@ -84,12 +84,12 @@ GameController.prototype.addMenus = function() {
   if (this.mainMenu) {
     this.canvas.stage.addChild(this.mainMenu.canvasObject);
     this.mainMenu.on('click', function(event) {
-      if (event.id === 'play') self.emit('action:start-new-game');
-    });
-    this.on('action:start-new-game', function() {
-      this.mainMenu.hide(function() {
-        self.emit('start-new-game');
-      });
+      if (event.id === 'play') {
+        self.emit('action:start-new-game');
+        self.mainMenu.hide(function() {
+          self.emit('start-new-game');
+        });
+      }
     });
   }
 
@@ -97,6 +97,12 @@ GameController.prototype.addMenus = function() {
     this.canvas.stage.addChild(this.pauseMenu.canvasObject);
     this.pauseMenu.on('click', function(event) {
       if (event.id === 'resume') self.emit('action:resume-game');
+      if (event.id === 'restart') {
+        self.emit('action:restart-game');
+        self.pauseMenu.hide(function() {
+          self.emit('restart-game');
+        });
+      }
     });
     this.on('pause-game', function() {
       this.pauseMenu.show();
@@ -112,6 +118,12 @@ GameController.prototype.addMenus = function() {
     this.canvas.stage.addChild(this.continueMenu.canvasObject);
     this.continueMenu.on('click', function(event) {
       if (event.id === 'continue') self.emit('action:start-next-level');
+      if (event.id === 'restart') {
+        self.emit('action:restart-game');
+        self.continueMenu.hide(function() {
+          self.emit('restart-game');
+        });
+      }
     });
     this.on('action:start-next-level', function() {
       this.continueMenu.hide(function() {
@@ -163,6 +175,9 @@ GameController.prototype.addDashboard = function() {
     this.on('action:resume-game', function() {
       self.dashboard.emit('resume-game');
     });
+    this.on('action:restart-game', function() {
+      self.dashboard.emit('resume-game');
+    });
 
     this.on('score-increase', function() {
       self.dashboard.setScore(self.score);
@@ -195,6 +210,9 @@ GameController.prototype.addGameArea = function() {
       self.gameArea.fadeOut();
     });
     this.on('resume-game', function() {
+      self.gameArea.fadeIn();
+    });
+    this.on('restart-game', function() {
       self.gameArea.fadeIn();
     });
     this.on('action:start-next-level', function() {
@@ -234,6 +252,9 @@ GameController.prototype.addBlockController = function() {
     });
     this.on('stop-level', function() {
       this.blockController.stopGame();
+      this.blockController.endLevel();
+    });
+    this.on('action:restart-game', function() {
       this.blockController.endLevel();
     });
     this.on('resume-game', function() {
@@ -340,6 +361,16 @@ GameController.prototype.setupGameEvents = function() {
   this.on('resume-game', function() {
     self.isPaused = false;
     self.resumeTimer();
+  });
+
+  this.on('restart-game', function() {
+    self.stopTimer();
+    self.score = 0;
+    self.level = 1;
+    self.levelProgress = 0;
+    self.isPaused = false;
+    self.isGameInProgress = false;
+    self.emit('start-new-game');
   });
 
   this.on('start-new-game', function() {
