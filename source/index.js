@@ -16,19 +16,34 @@ var canvas = controller.canvas = new Canvas('#canvas');
 // mainMenu: Displayed when the game is launched.
 // pauseMenu: Displayed when the game is paused.
 // continue: Displayed when the time is up for a level.
-controller.mainMenu = new Menu(canvas, 'main', 'Blocks', [
-  ['play', 'Play', '#0aa', '#2cc']
-]);
-controller.pauseMenu = new Menu(canvas, 'pause', 'Paused', [
-  ['resume', 'Resume', '#0aa', '#2cc'],
-  ['restart', 'Restart', '#a22', '#c44', 40],
-  ['main-menu', 'Main Menu', '#222', '#444', 40]
-]);
-controller.continueMenu = new Menu(canvas, 'continue', 'Time\'s Up', [
-  ['continue', 'Next Level', '#0aa', '#2cc'],
-  ['restart', 'Restart', '#a22', '#c44', 40],
-  ['main-menu', 'Main Menu', '#222', '#444', 40]
-]);
+controller.mainMenu = new Menu({
+  canvas: canvas,
+  id: 'main',
+  title: 'Blocks',
+  items: [
+    ['play', 'Play', '#0aa', '#2cc']
+  ]
+});
+controller.pauseMenu = new Menu({
+  canvas: canvas,
+  id: 'pause',
+  title: 'Paused',
+  items: [
+    ['resume', 'Resume', '#0aa', '#2cc'],
+    ['restart', 'Restart', '#a22', '#c44', 40],
+    ['main-menu', 'Main Menu', '#222', '#444', 40]
+  ]
+});
+controller.continueMenu = new Menu({
+  canvas: canvas,
+  id: 'continue',
+  title: 'Time\'s Up',
+  items: [
+    ['continue', 'Next Level', '#0aa', '#2cc'],
+    ['restart', 'Restart', '#a22', '#c44', 40],
+    ['main-menu', 'Main Menu', '#222', '#444', 40]
+  ]
+});
 
 // The controller needs to know about the dashboard
 controller.dashboard = new Dashboard(canvas);

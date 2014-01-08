@@ -25,23 +25,21 @@ var inherit = require('./utils/inherit');
  * @constructor
  * @augments {module:EventEmitter~EventEmitter}
  *
- * @param {module:Canvas~Canvas} canvas A Canvas instance.
- * @param {string} id An ID for the menu.
- * @param {string} title The large title for the menu.
- * @param {Array.<string>} items Array of menu item labels.
+ * @param {Object} Options object.
  */
-function Menu(canvas, id, title, items) {
+function Menu(options) {
   EventEmitter.call(this);
 
-  this.canvas = canvas;
-  this.id = id;
-  this.title = title;
-  this.items = items;
+  this.canvas = options.canvas;
+  this.id = options.id || '';
+  this.title = options.title || '';
+  this.items = options.items || [];
   this.canvasObject = this.createMenuObject();
   this.titleObject = this.createTitleObject();
   this.itemObjects = [];
   this.isAnimating = false;
 
+  var items = options.items;
   for (var i = 0, l = items.length; i < l; i++) {
     var item = items[i];
     this.itemObjects.push(this.createItemObject(i, {
