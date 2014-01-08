@@ -29,7 +29,7 @@ controller.pauseMenu = new Menu({
   canvas: canvas,
   id: 'pause',
   title: 'Paused',
-  offset: 50,
+  offset: 40,
   items: [
     ['resume', 'Resume', '#0aa', '#2cc'],
     ['restart', 'Restart', '#a22', '#c44', 40],
