@@ -46,7 +46,6 @@ function GameController() {
   this.level = 1;
   this.totalLevels = 10;
   this.levelProgress = 0;
-
   this.levelTime = 30; // In seconds
 }
 inherit(GameController, EventEmitter);
@@ -58,6 +57,9 @@ GameController.prototype.initializeGame = function() {
   if (!this.canvas) {
     throw new Error('The game can\'t be initialized without a canvas.');
   }
+
+  this.scoreBlockScore = this.canvas.isTouch ? 10 : 15;
+  this.dangerBlockScore = this.canvas.isTouch ? -100 : -150;
 
   this.setupGameEvents();
   this.addGameArea();
@@ -266,9 +268,21 @@ GameController.prototype.addGameArea = function() {
   var self = this;
 
   if (this.gameArea) {
+    this.gameArea.setScores({
+      scoreBlock: this.scoreBlockScore,
+      dangerBlock: this.dangerBlockScore
+    });
     this.canvas.stage.addChild(this.gameArea.canvasObject);
     this.on('start-new-game', function() {
       self.gameArea.setDangerZoneSize(self.level / 2 + 0.5);
+      self.emit('show-instructions');
+    });
+    this.on('show-instructions', function() {
+      self.gameArea.showInstructions();
+      setTimeout(function() {
+        self.gameArea.hideInstructions();
+        self.emit('initiate-gameplay');
+      }, 2000);
     });
     this.on('action:start-next-level', function() {
       self.gameArea.setDangerZoneSize(self.level / 2 + 0.5);
@@ -310,7 +324,9 @@ GameController.prototype.addBlockController = function() {
         var position = this.gameArea.dangerZonePosition;
         this.blockController.setDangerZonePosition(position);
       }
-      this.blockController.startGame();
+    });
+    this.on('initiate-gameplay', function() {
+      self.blockController.startGame();
     });
     this.on('start-next-level', function() {
       this.blockController.setLevel(self.level);
@@ -335,18 +351,10 @@ GameController.prototype.addBlockController = function() {
     });
 
     this.blockController.on('scoreblock-click', function() {
-      if (self.canvas.isTouch) {
-        self.emit('score-increase', {amount: 10});
-      } else {
-        self.emit('score-increase', {amount: 15});
-      }
+      self.emit('score-increase', {amount: self.scoreBlockScore});
     });
     this.blockController.on('dangerblock-click', function() {
-      if (self.canvas.isTouch) {
-        self.emit('score-decrease', {amount: 100});
-      } else {
-        self.emit('score-decrease', {amount: 150});
-      }
+      self.emit('score-decrease', {amount: -self.dangerBlockScore});
     });
   }
 };
@@ -451,6 +459,9 @@ GameController.prototype.setupGameEvents = function() {
 
   this.on('start-new-game', function() {
     self.isGameInProgress = true;
+  });
+
+  this.on('initiate-gameplay', function() {
     self.startTimer();
   });
 

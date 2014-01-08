@@ -18,6 +18,8 @@ var inherit = require('./utils/inherit');
  * @property {Object} canvasObject An oCanvas object for the game area.
  * @property {Object} blockArea An oCanvas object where blocks should be added.
  * @property {Object} dangerZone An oCanvas object for the danger zone.
+ * @property {Object} scoreInstructions An oCanvas object for the score instructions.
+ * @property {Object} instructions An oCanvas object for the instructions.
  *
  * @constructor
  * @augments {module:EventEmitter~EventEmitter}
@@ -33,6 +35,8 @@ function GameArea(canvas) {
   this.canvasObject = this.createGameAreaObject();
   this.blockArea = this.createBlockAreaObject();
   this.dangerZone = this.createDangerZoneObject();
+  this.scoreInstructions = null;
+  this.instructions = this.createInstructionsObject();
 }
 inherit(GameArea, EventEmitter);
 
@@ -98,6 +102,75 @@ GameArea.prototype.createDangerZoneObject = function() {
 };
 
 /**
+ * Create a renderable wrapper object for the instructions.
+ *
+ * @return {Object} An oCanvas object for the instructions.
+ */
+GameArea.prototype.createInstructionsObject = function() {
+  var canvas = this.canvas;
+  var stage = canvas.stage;
+  var dpr = canvas.dpr;
+  var gameArea = this.canvasObject;
+
+  var object = stage.display.rectangle({
+    width: gameArea.width, height: gameArea.height
+  });
+
+  var scoreInstructions = stage.display.rectangle({
+    width: gameArea.width, height: gameArea.height,
+    y: -150
+  });
+  object.addChild(scoreInstructions);
+  this.scoreInstructions = scoreInstructions;
+
+  var blockSize = 30;
+
+  var scoreBlock = stage.display.rectangle({
+    x: dpr * 50, y: dpr * 80,
+    width: dpr * blockSize, height: dpr * blockSize,
+    fill: '#0bb'
+  });
+  scoreInstructions.addChild(scoreBlock);
+
+  var dangerBlock = stage.display.rectangle({
+    x: dpr * 50, y: dpr * 120,
+    width: dpr * blockSize, height: dpr * blockSize,
+    fill: '#b00'
+  });
+  scoreInstructions.addChild(dangerBlock);
+
+  var scoreBlockText = stage.display.text({
+    x: scoreBlock.x + dpr * (blockSize + 10), y: scoreBlock.y + scoreBlock.height / 2,
+    origin: {x: 'left', y: 'center'},
+    fill: '#222',
+    text: '+ 20 points',
+    font: (dpr * 18) + 'px ' + canvas.font
+  });
+  scoreInstructions.addChild(scoreBlockText);
+
+  var dangerBlockText = stage.display.text({
+    x: dangerBlock.x + dpr * (blockSize + 10), y: dangerBlock.y + dangerBlock.height / 2,
+    origin: {x: 'left', y: 'center'},
+    fill: '#222',
+    text: '- 20 points',
+    font: (dpr * 18) + 'px ' + canvas.font
+  });
+  scoreInstructions.addChild(dangerBlockText);
+
+  object.setScoreBlockScore = function(score) {
+    scoreBlockText.text = (score > 0 ? '+ ' : '- ') + Math.abs(score) + ' POINTS';
+    scoreBlockText.fill = score > 0 ? '#222' : '#b00';
+  };
+
+  object.setDangerBlockScore = function(score) {
+    dangerBlockText.text = (score > 0 ? '+ ' : '- ') + Math.abs(score) + ' POINTS';
+    dangerBlockText.fill = score > 0 ? '#222' : '#b00';
+  };
+
+  return object;
+};
+
+/**
  * Set the danger zone size visually.
  *
  * @param {number} multiplier A number that will be multiplied with
@@ -133,6 +206,43 @@ GameArea.prototype.fadeIn = function() {
  */
 GameArea.prototype.fadeOut = function() {
   this.canvasObject.stop().animate({opacity: 0.1}, {duration: 100});
+};
+
+/**
+ * Set new score labels for instructions.
+ *
+ * @param {Object} scores Object with two properties: scoreBlock and
+ *     dangerBlock, both numbers.
+ */
+GameArea.prototype.setScores = function(scores) {
+  this.instructions.setScoreBlockScore(scores.scoreBlock);
+  this.instructions.setDangerBlockScore(scores.dangerBlock);
+};
+
+/**
+ * Show the instructions.
+ */
+GameArea.prototype.showInstructions = function() {
+  this.canvasObject.addChild(this.instructions);
+  this.scoreInstructions.animate({y: 0}, {
+    easing: 'ease-out-cubic',
+    duration: 500
+  });
+};
+
+/**
+ * Hide the instructions.
+ */
+GameArea.prototype.hideInstructions = function() {
+  var self = this;
+
+  this.scoreInstructions.animate({y: -150}, {
+    easing: 'ease-in-cubic',
+    duration: 500,
+    callback: function() {
+      self.instructions.remove();
+    }
+  });
 };
 
 /**
