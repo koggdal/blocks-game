@@ -119,18 +119,21 @@ Dashboard.prototype.createPauseButton = function() {
     line1.opacity = 0;
     line2.opacity = 0;
     play.opacity = 1;
+    self.canvasObject.zIndex = 'front';
     canvas.requestRender();
   });
   this.on('resume-game', function() {
     play.opacity = 0;
     line1.opacity = 1;
     line2.opacity = 1;
+    self.canvasObject.zIndex = 'front';
     canvas.requestRender();
   });
   this.on('start-new-game', function() {
     play.opacity = 0;
     line1.opacity = 1;
     line2.opacity = 1;
+    self.canvasObject.zIndex = 'front';
     canvas.requestRender();
   });
   this.on('stop-level', function() {

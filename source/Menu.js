@@ -67,8 +67,7 @@ Menu.prototype.createMenuObject = function() {
   var object = stage.display.rectangle({
     x: -stage.width, y: 0,
     width: stage.width,
-    height: stage.height,
-    opacity: 0
+    height: stage.height
   });
   return object;
 };
@@ -190,12 +189,13 @@ Menu.prototype.createItemObject = function(index, options) {
 /**
  * Show menu with an animation.
  *
+ * @param {Object} parentObject An oCanvas object to add the menu object to.
  * @param {function=} opt_callback Callback triggered when animation is done.
  */
-Menu.prototype.show = function(opt_callback) {
+Menu.prototype.show = function(parentObject, opt_callback) {
   var self = this;
   this.isAnimating = true;
-  this.canvasObject.opacity = 1;
+  parentObject.addChild(this.canvasObject);
   this.canvasObject.animate({
     x: 0
   }, {
@@ -222,6 +222,7 @@ Menu.prototype.hide = function(opt_callback) {
     easing: 'ease-in-back',
     duration: 500,
     callback: function() {
+      self.canvasObject.remove();
       self.isAnimating = false;
       if (opt_callback) opt_callback();
     }

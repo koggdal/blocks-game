@@ -71,7 +71,7 @@ GameController.prototype.initializeGame = function() {
     // Use a timer to let the font load
     var self = this;
     setTimeout(function() {
-      self.mainMenu.show();
+      self.mainMenu.show(self.canvas.stage);
     }, 1000);
   }
 };
@@ -83,7 +83,6 @@ GameController.prototype.addMenus = function() {
   var self = this;
 
   if (this.mainMenu) {
-    this.canvas.stage.addChild(this.mainMenu.canvasObject);
     this.mainMenu.on('click', function(event) {
       if (event.id === 'play') {
         self.emit('action:start-new-game');
@@ -95,7 +94,6 @@ GameController.prototype.addMenus = function() {
   }
 
   if (this.pauseMenu) {
-    this.canvas.stage.addChild(this.pauseMenu.canvasObject);
     this.pauseMenu.on('click', function(event) {
       if (event.id === 'resume') self.emit('action:resume-game');
       if (event.id === 'restart') {
@@ -111,12 +109,12 @@ GameController.prototype.addMenus = function() {
         self.emit('action:go-mainmenu');
         self.pauseMenu.hide(function() {
           self.emit('reset-game');
-          if (self.mainMenu) self.mainMenu.show();
+          if (self.mainMenu) self.mainMenu.show(self.canvas.stage);
         });
       }
     });
     this.on('pause-game', function() {
-      this.pauseMenu.show();
+      this.pauseMenu.show(self.canvas.stage);
     });
     this.on('action:resume-game', function() {
       this.pauseMenu.hide(function() {
@@ -126,7 +124,6 @@ GameController.prototype.addMenus = function() {
   }
 
   if (this.continueMenu) {
-    this.canvas.stage.addChild(this.continueMenu.canvasObject);
     this.continueMenu.on('click', function(event) {
       if (event.id === 'continue') self.emit('action:start-next-level');
       if (event.id === 'restart') {
@@ -142,7 +139,7 @@ GameController.prototype.addMenus = function() {
         self.emit('action:go-mainmenu');
         self.continueMenu.hide(function() {
           self.emit('reset-game');
-          if (self.mainMenu) self.mainMenu.show();
+          if (self.mainMenu) self.mainMenu.show(self.canvas.stage);
         });
       }
     });
@@ -156,18 +153,17 @@ GameController.prototype.addMenus = function() {
         self.dashboard.hidePauseButton();
         self.gameOverMenu.subtitle = self.score;
         self.gameOverMenu.subtitleObject.text = self.score + ' points';
-        self.gameOverMenu.show();
+        self.gameOverMenu.show(self.canvas.stage);
       } else {
         var levelsLeft = self.totalLevels - self.level;
         self.continueMenu.subtitle = levelsLeft + ' ' + (levelsLeft === 1 ? 'level' : 'levels') + ' left';
         self.continueMenu.subtitleObject.text =  self.continueMenu.subtitle;
-        self.continueMenu.show();
+        self.continueMenu.show(self.canvas.stage);
       }
     });
   }
 
   if (this.gameOverMenu) {
-    this.canvas.stage.addChild(this.gameOverMenu.canvasObject);
     this.gameOverMenu.on('click', function(event) {
       if (event.id === 'restart') {
         self.emit('action:reset-game');
@@ -182,7 +178,7 @@ GameController.prototype.addMenus = function() {
         self.emit('action:go-mainmenu');
         self.gameOverMenu.hide(function() {
           self.emit('reset-game');
-          if (self.mainMenu) self.mainMenu.show();
+          if (self.mainMenu) self.mainMenu.show(self.canvas.stage);
         });
       }
     });
