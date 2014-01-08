@@ -21,11 +21,13 @@ controller.mainMenu = new Menu(canvas, 'main', 'Blocks', [
 ]);
 controller.pauseMenu = new Menu(canvas, 'pause', 'Paused', [
   ['resume', 'Resume', '#0aa', '#2cc'],
-  ['restart', 'Restart', '#a22', '#c44', 40]
+  ['restart', 'Restart', '#a22', '#c44', 40],
+  ['main-menu', 'Main Menu', '#222', '#444', 40]
 ]);
 controller.continueMenu = new Menu(canvas, 'continue', 'Time\'s Up', [
   ['continue', 'Next Level', '#0aa', '#2cc'],
-  ['restart', 'Restart', '#a22', '#c44', 40]
+  ['restart', 'Restart', '#a22', '#c44', 40],
+  ['main-menu', 'Main Menu', '#222', '#444', 40]
 ]);
 
 // The controller needs to know about the dashboard

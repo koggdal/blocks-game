@@ -127,6 +127,12 @@ Dashboard.prototype.createPauseButton = function() {
     line2.opacity = 1;
     canvas.requestRender();
   });
+  this.on('start-new-game', function() {
+    play.opacity = 0;
+    line1.opacity = 1;
+    line2.opacity = 1;
+    canvas.requestRender();
+  });
   this.on('stop-level', function() {
     line1.opacity = 0;
     line2.opacity = 0;
