@@ -20,6 +20,7 @@ controller.mainMenu = new Menu({
   canvas: canvas,
   id: 'main',
   title: 'Blocks',
+  offset: 50,
   items: [
     ['play', 'Play', '#0aa', '#2cc']
   ]
@@ -28,20 +29,22 @@ controller.pauseMenu = new Menu({
   canvas: canvas,
   id: 'pause',
   title: 'Paused',
+  offset: 50,
   items: [
     ['resume', 'Resume', '#0aa', '#2cc'],
     ['restart', 'Restart', '#a22', '#c44', 40],
-    ['main-menu', 'Main Menu', '#222', '#444', 40]
+    ['main-menu', 'Main Menu', '#222', '#444', 70]
   ]
 });
 controller.continueMenu = new Menu({
   canvas: canvas,
   id: 'continue',
   title: 'Time\'s Up',
+  subtitle: '',
   items: [
-    ['continue', 'Next Level', '#0aa', '#2cc'],
-    ['restart', 'Restart', '#a22', '#c44', 40],
-    ['main-menu', 'Main Menu', '#222', '#444', 40]
+    ['continue', 'Next Level', '#0aa', '#2cc', 20],
+    ['restart', 'Restart', '#a22', '#c44', 50],
+    ['main-menu', 'Main Menu', '#222', '#444', 80]
   ]
 });
 

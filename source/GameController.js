@@ -151,7 +151,10 @@ GameController.prototype.addMenus = function() {
       });
     });
     this.on('stop-level', function() {
-      this.continueMenu.show();
+      var levelsLeft = self.totalLevels - self.level;
+      self.continueMenu.subtitle = levelsLeft + ' ' + (levelsLeft === 1 ? 'level' : 'levels') + ' left';
+      self.continueMenu.subtitleObject.text =  self.continueMenu.subtitle;
+      self.continueMenu.show();
     });
   }
 };

@@ -32,10 +32,13 @@ function Menu(options) {
 
   this.canvas = options.canvas;
   this.id = options.id || '';
-  this.title = options.title || '';
-  this.items = options.items || [];
+  this.title = options.title || '';
+  this.subtitle = options.subtitle || '';
+  this.offset = options.offset || 0;
+  this.items = options.items || [];
   this.canvasObject = this.createMenuObject();
   this.titleObject = this.createTitleObject();
+  this.subtitleObject = this.createSubtitleObject();
   this.itemObjects = [];
   this.isAnimating = false;
 
@@ -82,12 +85,37 @@ Menu.prototype.createTitleObject = function() {
 
   var object = stage.display.text({
     x: menu.width / 2,
-    y: menu.height / 2 - dpr * 100,
+    y: menu.height / 2 - dpr * (150 - this.offset),
     origin: {x: 'center', y: 'center'},
     align: 'center',
     fill: '#222',
     text: this.title.toUpperCase(),
     font: (dpr * 60) + 'px ' + canvas.font
+  });
+  menu.addChild(object);
+
+  return object;
+};
+
+/**
+ * Create a renderable object for the subtitle.
+ *
+ * @return {Object} An oCanvas object for the title.
+ */
+Menu.prototype.createSubtitleObject = function() {
+  var canvas = this.canvas;
+  var stage = canvas.stage;
+  var dpr = canvas.dpr;
+  var menu = this.canvasObject;
+
+  var object = stage.display.text({
+    x: menu.width / 2,
+    y: menu.height / 2 - dpr * 75,
+    origin: {x: 'center', y: 'center'},
+    align: 'center',
+    fill: '#222',
+    text: this.subtitle,
+    font: (dpr * 40) + 'px ' + canvas.font
   });
   menu.addChild(object);
 
@@ -117,7 +145,7 @@ Menu.prototype.createItemObject = function(index, options) {
 
   var object = stage.display.rectangle({
     x: menu.width / 2,
-    y: menu.height / 2 + index * (itemHeight + itemOffset) * dpr,
+    y: menu.height / 2 + index * itemHeight * dpr + itemOffset * dpr,
     width: menu.width / 2,
     height: itemHeight * dpr,
     origin: {x: 'center', y: 'center'},
