@@ -90,6 +90,14 @@ GameController.prototype.addMenus = function() {
           self.emit('start-new-game');
         });
       }
+      if (event.id === 'play-level') {
+        var level = parseInt(prompt('Which level?'), 10);
+        self.level = level;
+        self.emit('action:start-new-game');
+        self.mainMenu.hide(function() {
+          self.emit('start-new-game');
+        });
+      }
     });
   }
 

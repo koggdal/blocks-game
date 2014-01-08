@@ -22,7 +22,8 @@ controller.mainMenu = new Menu({
   title: 'Blocks',
   offset: 50,
   items: [
-    ['play', 'Play', '#0aa', '#2cc']
+    ['play', 'Play', '#0aa', '#2cc'],
+    ['play-level', 'Play Level', '#222', '#444']
   ]
 });
 controller.pauseMenu = new Menu({
