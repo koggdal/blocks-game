@@ -145,7 +145,7 @@ Menu.prototype.createItemObject = function(index, options) {
 
   var object = stage.display.rectangle({
     x: menu.width / 2,
-    y: menu.height / 2 + index * itemHeight * dpr + itemOffset * dpr,
+    y: menu.height / 2 + index * (itemHeight + 10) * dpr + (itemOffset - 10) * dpr,
     width: menu.width / 2,
     height: itemHeight * dpr,
     origin: {x: 'center', y: 'center'},
