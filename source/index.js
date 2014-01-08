@@ -47,6 +47,16 @@ controller.continueMenu = new Menu({
     ['main-menu', 'Main Menu', '#222', '#444', 80]
   ]
 });
+controller.gameOverMenu = new Menu({
+  canvas: canvas,
+  id: 'gameover',
+  title: 'Game Over',
+  subtitle: '',
+  items: [
+    ['restart', 'Restart', '#a22', '#c44', 50],
+    ['main-menu', 'Main Menu', '#222', '#444', 80]
+  ]
+});
 
 // The controller needs to know about the dashboard
 controller.dashboard = new Dashboard(canvas);

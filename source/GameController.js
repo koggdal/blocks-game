@@ -44,6 +44,7 @@ function GameController() {
   this.isPaused = false;
   this.score = 0;
   this.level = 1;
+  this.totalLevels = 10;
   this.levelProgress = 0;
 
   this.levelTime = 30; // In seconds
@@ -151,10 +152,39 @@ GameController.prototype.addMenus = function() {
       });
     });
     this.on('stop-level', function() {
-      var levelsLeft = self.totalLevels - self.level;
-      self.continueMenu.subtitle = levelsLeft + ' ' + (levelsLeft === 1 ? 'level' : 'levels') + ' left';
-      self.continueMenu.subtitleObject.text =  self.continueMenu.subtitle;
-      self.continueMenu.show();
+      if (self.level === self.totalLevels) {
+        self.dashboard.hidePauseButton();
+        self.gameOverMenu.subtitle = self.score;
+        self.gameOverMenu.subtitleObject.text = self.score + ' points';
+        self.gameOverMenu.show();
+      } else {
+        var levelsLeft = self.totalLevels - self.level;
+        self.continueMenu.subtitle = levelsLeft + ' ' + (levelsLeft === 1 ? 'level' : 'levels') + ' left';
+        self.continueMenu.subtitleObject.text =  self.continueMenu.subtitle;
+        self.continueMenu.show();
+      }
+    });
+  }
+
+  if (this.gameOverMenu) {
+    this.canvas.stage.addChild(this.gameOverMenu.canvasObject);
+    this.gameOverMenu.on('click', function(event) {
+      if (event.id === 'restart') {
+        self.emit('action:reset-game');
+        self.emit('action:restart-game');
+        self.gameOverMenu.hide(function() {
+          self.emit('reset-game');
+          self.emit('restart-game');
+        });
+      }
+      if (event.id === 'main-menu') {
+        self.emit('action:reset-game');
+        self.emit('action:go-mainmenu');
+        self.gameOverMenu.hide(function() {
+          self.emit('reset-game');
+          if (self.mainMenu) self.mainMenu.show();
+        });
+      }
     });
   }
 };
@@ -201,6 +231,9 @@ GameController.prototype.addDashboard = function() {
     });
     this.on('action:restart-game', function() {
       self.dashboard.emit('resume-game');
+    });
+    this.on('action:restart-game', function() {
+      self.dashboard.showPauseButton();
     });
     this.on('action:reset-game', function() {
       self.dashboard.setLevel(self.level);
