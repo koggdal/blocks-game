@@ -67,7 +67,8 @@ Menu.prototype.createMenuObject = function() {
   var object = stage.display.rectangle({
     x: -stage.width, y: 0,
     width: stage.width,
-    height: stage.height
+    height: stage.height,
+    opacity: 0
   });
   return object;
 };
@@ -194,6 +195,7 @@ Menu.prototype.createItemObject = function(index, options) {
 Menu.prototype.show = function(opt_callback) {
   var self = this;
   this.isAnimating = true;
+  this.canvasObject.opacity = 1;
   this.canvasObject.animate({
     x: 0
   }, {
