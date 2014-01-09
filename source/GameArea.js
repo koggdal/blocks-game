@@ -123,17 +123,18 @@ GameArea.prototype.createInstructionsObject = function() {
   object.addChild(scoreInstructions);
   this.scoreInstructions = scoreInstructions;
 
-  var blockSize = 30;
+  var blockSize = 40;
+  var fontSize = 26;
 
   var scoreBlock = stage.display.rectangle({
-    x: dpr * 50, y: dpr * 80,
+    x: dpr * 70, y: dpr * 70,
     width: dpr * blockSize, height: dpr * blockSize,
     fill: '#0bb'
   });
   scoreInstructions.addChild(scoreBlock);
 
   var dangerBlock = stage.display.rectangle({
-    x: dpr * 50, y: dpr * 120,
+    x: scoreBlock.x, y: scoreBlock.y + scoreBlock.height + dpr * 10,
     width: dpr * blockSize, height: dpr * blockSize,
     fill: '#b00'
   });
@@ -144,7 +145,7 @@ GameArea.prototype.createInstructionsObject = function() {
     origin: {x: 'left', y: 'center'},
     fill: '#222',
     text: '+ 20 points',
-    font: (dpr * 18) + 'px ' + canvas.font
+    font: (dpr * fontSize) + 'px ' + canvas.font
   });
   scoreInstructions.addChild(scoreBlockText);
 
@@ -153,18 +154,18 @@ GameArea.prototype.createInstructionsObject = function() {
     origin: {x: 'left', y: 'center'},
     fill: '#222',
     text: '- 20 points',
-    font: (dpr * 18) + 'px ' + canvas.font
+    font: (dpr * fontSize) + 'px ' + canvas.font
   });
   scoreInstructions.addChild(dangerBlockText);
 
   object.setScoreBlockScore = function(score) {
     scoreBlockText.text = (score > 0 ? '+ ' : '- ') + Math.abs(score) + ' POINTS';
-    scoreBlockText.fill = score > 0 ? '#222' : '#b00';
+    scoreBlockText.fill = '#0aa';
   };
 
   object.setDangerBlockScore = function(score) {
     dangerBlockText.text = (score > 0 ? '+ ' : '- ') + Math.abs(score) + ' POINTS';
-    dangerBlockText.fill = score > 0 ? '#222' : '#b00';
+    dangerBlockText.fill = '#b00';
   };
 
   return object;
