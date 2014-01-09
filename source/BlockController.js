@@ -96,7 +96,7 @@ function BlockController(canvas) {
   });
 
   this.on('scoreblock-reach-end', function() {
-    self.increaseBlockSpeed(0.2);
+    self.increaseBlockSpeed(0.2, true);
   });
 }
 inherit(BlockController, EventEmitter);
@@ -309,13 +309,16 @@ BlockController.prototype.endLevel = function() {
 
 /**
  * Increase the block speed by a certain amount.
- * This will respect the `maxBlockSpeed` setting.
+ * This will respect the `maxBlockSpeed` setting if not forced.
  *
  * @param {number} amount The amount to increase with.
+ * @param {boolean=} opt_force If true it won't respect the max setting,
+ *     and use 10 as max instead.
  */
-BlockController.prototype.increaseBlockSpeed = function(amount) {
+BlockController.prototype.increaseBlockSpeed = function(amount, opt_force) {
   var max = this.maxBlockSpeed;
   if (this.level < 5) max = this.maxBlockSpeed / 1.5;
+  if (opt_force) max = 10;
   this.blockSpeed = Math.min(this.blockSpeed + amount, max);
 };
 
