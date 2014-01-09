@@ -207,8 +207,10 @@ GameController.prototype.addDashboard = function() {
       self.dashboard.emit('start-new-game');
       self.dashboard.setLevel(self.level);
       self.dashboard.setScore(self.score);
-      self.dashboard.showPauseButton();
       self.dashboard.showInfo();
+    });
+    this.on('initiate-gameplay', function() {
+      self.dashboard.showPauseButton();
     });
     this.on('action:start-next-level', function() {
       self.dashboard.setLevel(self.level);
@@ -280,8 +282,9 @@ GameController.prototype.addGameArea = function() {
     this.on('show-instructions', function() {
       self.gameArea.showInstructions();
       setTimeout(function() {
-        self.gameArea.hideInstructions();
-        self.emit('initiate-gameplay');
+        self.gameArea.hideInstructions(function() {
+          self.emit('initiate-gameplay');
+        });
       }, 2000);
     });
     this.on('action:start-next-level', function() {
@@ -457,11 +460,8 @@ GameController.prototype.setupGameEvents = function() {
     self.isGameInProgress = false;
   });
 
-  this.on('start-new-game', function() {
-    self.isGameInProgress = true;
-  });
-
   this.on('initiate-gameplay', function() {
+    self.isGameInProgress = true;
     self.startTimer();
   });
 

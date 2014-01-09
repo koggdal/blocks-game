@@ -222,19 +222,28 @@ GameArea.prototype.setScores = function(scores) {
 
 /**
  * Show the instructions.
+ *
+ * @param {function=} opt_callback Optional callback that triggers when the
+ *     animation is completed.
  */
-GameArea.prototype.showInstructions = function() {
+GameArea.prototype.showInstructions = function(opt_callback) {
   this.canvasObject.addChild(this.instructions);
   this.scoreInstructions.animate({y: 0}, {
     easing: 'ease-out-cubic',
-    duration: 500
+    duration: 500,
+    callback: function() {
+      if (opt_callback) opt_callback();
+    }
   });
 };
 
 /**
  * Hide the instructions.
+ *
+ * @param {function=} opt_callback Optional callback that triggers when the
+ *     animation is completed.
  */
-GameArea.prototype.hideInstructions = function() {
+GameArea.prototype.hideInstructions = function(opt_callback) {
   var self = this;
 
   this.scoreInstructions.animate({y: -150}, {
@@ -242,6 +251,7 @@ GameArea.prototype.hideInstructions = function() {
     duration: 500,
     callback: function() {
       self.instructions.remove();
+      if (opt_callback) opt_callback();
     }
   });
 };
