@@ -238,10 +238,8 @@ GameController.prototype.addDashboard = function() {
       self.dashboard.emit('resume-game');
     });
     this.on('action:restart-game', function() {
+      self.dashboard.hidePauseButton();
       self.dashboard.emit('resume-game');
-    });
-    this.on('action:restart-game', function() {
-      self.dashboard.showPauseButton();
     });
     this.on('action:reset-game', function() {
       self.dashboard.setLevel(self.level);

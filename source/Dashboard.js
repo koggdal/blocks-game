@@ -70,8 +70,7 @@ Dashboard.prototype.createPauseButton = function() {
   var lineWidth = Math.round(offset / 1.2);
 
   var object = stage.display.rectangle({
-    width: this.height, height: this.height,
-    opacity: 0
+    width: this.height, height: this.height
   });
   var line1 = stage.display.rectangle({
     x: Math.round(offset + lineWidth / 4), y: offset,
@@ -95,8 +94,6 @@ Dashboard.prototype.createPauseButton = function() {
   object.addChild(play);
   object.addChild(line1);
   object.addChild(line2);
-
-  dashboard.addChild(object);
 
   var self = this;
   object.bind('click tap', function() {
@@ -239,7 +236,7 @@ Dashboard.prototype.createTimer = function() {
  * Show the pause button.
  */
 Dashboard.prototype.showPauseButton = function() {
-  this.pauseButton.opacity = 1;
+  this.canvasObject.addChild(this.pauseButton);
   this.canvas.requestRender();
 };
 
@@ -247,7 +244,7 @@ Dashboard.prototype.showPauseButton = function() {
  * Hide the pause button.
  */
 Dashboard.prototype.hidePauseButton = function() {
-  this.pauseButton.opacity = 0;
+  this.pauseButton.remove();
   this.canvas.requestRender();
 };
 
