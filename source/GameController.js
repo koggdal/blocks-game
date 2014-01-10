@@ -278,12 +278,9 @@ GameController.prototype.addGameArea = function() {
       self.emit('show-instructions');
     });
     this.on('show-instructions', function() {
-      self.gameArea.showInstructions();
-      setTimeout(function() {
-        self.gameArea.hideInstructions(function() {
-          self.emit('initiate-gameplay');
-        });
-      }, 2000);
+      self.gameArea.showInstructions(function() {
+        self.emit('initiate-gameplay');
+      });
     });
     this.on('action:start-next-level', function() {
       self.gameArea.setDangerZoneSize(self.level / 2 + 0.5);

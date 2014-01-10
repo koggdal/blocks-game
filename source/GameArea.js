@@ -18,8 +18,10 @@ var inherit = require('./utils/inherit');
  * @property {Object} canvasObject An oCanvas object for the game area.
  * @property {Object} blockArea An oCanvas object where blocks should be added.
  * @property {Object} dangerZone An oCanvas object for the danger zone.
- * @property {Object} scoreInstructions An oCanvas object for the score instructions.
  * @property {Object} instructions An oCanvas object for the instructions.
+ * @property {Array.<Object>} instructionSteps An array of oCanvas objects for
+ *     the instructions steps. When showing the instructions, each step will be
+ *     animated in and out.
  *
  * @constructor
  * @augments {module:EventEmitter~EventEmitter}
@@ -35,7 +37,7 @@ function GameArea(canvas) {
   this.canvasObject = this.createGameAreaObject();
   this.blockArea = this.createBlockAreaObject();
   this.dangerZone = this.createDangerZoneObject();
-  this.scoreInstructions = null;
+  this.instructionSteps = null;
   this.instructions = this.createInstructionsObject();
 }
 inherit(GameArea, EventEmitter);
@@ -116,29 +118,51 @@ GameArea.prototype.createInstructionsObject = function() {
     width: gameArea.width, height: gameArea.height
   });
 
-  var scoreInstructions = stage.display.rectangle({
-    width: gameArea.width, height: gameArea.height,
-    y: -150
-  });
-  object.addChild(scoreInstructions);
-  this.scoreInstructions = scoreInstructions;
+  var height = dpr * 95;
+  var offset = dpr * 75;
+
+  var instructionSteps = [
+    stage.display.rectangle({
+      width: gameArea.width - offset * 2, height: height,
+      x: offset, y: object.height / 2 - height / 2 - dpr * 20,
+      opacity: 0,
+      duration: 1000
+    }),
+    stage.display.rectangle({
+      width: gameArea.width - offset * 2, height: height,
+      x: offset, y: object.height / 2 - height / 2 - dpr * 20,
+      opacity: 0,
+      duration: 1000
+    }),
+    stage.display.rectangle({
+      width: gameArea.width - offset * 2, height: height,
+      x: offset, y: object.height / 2 - height / 2 - dpr * 20,
+      opacity: 0,
+      duration: 500
+    })
+  ];
+  this.instructionSteps = instructionSteps;
+
+  object.addChild(instructionSteps[0]);
+  object.addChild(instructionSteps[1]);
+  object.addChild(instructionSteps[2]);
 
   var blockSize = 40;
   var fontSize = 26;
 
   var scoreBlock = stage.display.rectangle({
-    x: dpr * 70, y: dpr * 70,
+    x: 0, y: 0,
     width: dpr * blockSize, height: dpr * blockSize,
     fill: '#0bb'
   });
-  scoreInstructions.addChild(scoreBlock);
+  instructionSteps[0].addChild(scoreBlock);
 
   var dangerBlock = stage.display.rectangle({
     x: scoreBlock.x, y: scoreBlock.y + scoreBlock.height + dpr * 10,
     width: dpr * blockSize, height: dpr * blockSize,
     fill: '#b00'
   });
-  scoreInstructions.addChild(dangerBlock);
+  instructionSteps[0].addChild(dangerBlock);
 
   var scoreBlockText = stage.display.text({
     x: scoreBlock.x + dpr * (blockSize + 10), y: scoreBlock.y + scoreBlock.height / 2,
@@ -147,7 +171,7 @@ GameArea.prototype.createInstructionsObject = function() {
     text: '+ 20 points',
     font: (dpr * fontSize) + 'px ' + canvas.font
   });
-  scoreInstructions.addChild(scoreBlockText);
+  instructionSteps[0].addChild(scoreBlockText);
 
   var dangerBlockText = stage.display.text({
     x: dangerBlock.x + dpr * (blockSize + 10), y: dangerBlock.y + dangerBlock.height / 2,
@@ -156,7 +180,7 @@ GameArea.prototype.createInstructionsObject = function() {
     text: '- 20 points',
     font: (dpr * fontSize) + 'px ' + canvas.font
   });
-  scoreInstructions.addChild(dangerBlockText);
+  instructionSteps[0].addChild(dangerBlockText);
 
   object.setScoreBlockScore = function(score) {
     scoreBlockText.text = (score > 0 ? '+ ' : '- ') + Math.abs(score) + ' POINTS';
@@ -167,6 +191,36 @@ GameArea.prototype.createInstructionsObject = function() {
     dangerBlockText.text = (score > 0 ? '+ ' : '- ') + Math.abs(score) + ' POINTS';
     dangerBlockText.fill = '#b00';
   };
+
+  var timeText = stage.display.text({
+    x: instructionSteps[0].width / 2, y: 0,
+    origin: {x: 'center', y: 'top'},
+    align: 'center',
+    fill: '#222',
+    text: '10 Levels',
+    font: (dpr * 46) + 'px ' + canvas.font
+  });
+  instructionSteps[1].addChild(timeText);
+
+  var timeText2 = stage.display.text({
+    x: instructionSteps[1].width / 2, y: timeText.y + dpr * 60,
+    origin: {x: 'center', y: 'top'},
+    align: 'center',
+    fill: '#222',
+    text: '30 seconds each',
+    font: (dpr * 24) + 'px ' + canvas.font
+  });
+  instructionSteps[1].addChild(timeText2);
+
+  var readyText = stage.display.text({
+    x: instructionSteps[2].width / 2, y: 0,
+    origin: {x: 'center', y: 'top'},
+    align: 'center',
+    fill: '#222',
+    text: 'GO!',
+    font: (dpr * 46) + 'px ' + canvas.font
+  });
+  instructionSteps[2].addChild(readyText);
 
   return object;
 };
@@ -228,31 +282,50 @@ GameArea.prototype.setScores = function(scores) {
  */
 GameArea.prototype.showInstructions = function(opt_callback) {
   this.canvasObject.addChild(this.instructions);
-  this.scoreInstructions.animate({y: 0}, {
-    easing: 'ease-out-cubic',
-    duration: 500,
-    callback: function() {
-      if (opt_callback) opt_callback();
-    }
-  });
+  this.showInstructionStep(0, opt_callback);
 };
 
 /**
- * Hide the instructions.
+ * Show the specified instruction step. It will animate in and out and then
+ * show the next instruction step.
  *
- * @param {function=} opt_callback Optional callback that triggers when the
- *     animation is completed.
+ * @param {function=} opt_callback Optional callback that triggers when all
+ *     steps have been shown.
  */
-GameArea.prototype.hideInstructions = function(opt_callback) {
+GameArea.prototype.showInstructionStep = function(index, opt_callback) {
   var self = this;
+  var step = this.instructionSteps[index];
 
-  this.scoreInstructions.animate({y: -150}, {
-    easing: 'ease-in-cubic',
-    duration: 500,
-    callback: function() {
-      self.instructions.remove();
-      if (opt_callback) opt_callback();
-    }
+  if (!step) {
+    this.instructions.remove();
+    if (opt_callback) opt_callback();
+    return;
+  }
+
+  function fadeIn(cb) {
+    step.animate({opacity: 1}, {
+      easing: 'ease-in-out-cubic',
+      duration: 500,
+      callback: cb
+    });
+  }
+
+  function fadeOut(cb) {
+    step.animate({opacity: 0}, {
+      easing: 'ease-in-out-cubic',
+      duration: 500,
+      callback: cb
+    });
+  }
+
+  fadeIn(function() {
+    setTimeout(function() {
+      fadeOut(function() {
+      });
+      setTimeout(function() {
+        self.showInstructionStep(++index, opt_callback);
+      }, 250);
+    }, step.duration);
   });
 };
 
