@@ -278,7 +278,7 @@ GameController.prototype.addGameArea = function() {
       self.emit('show-instructions');
     });
     this.on('show-instructions', function() {
-      self.gameArea.showInstructions(function() {
+      self.gameArea.showInstructions(this.levelTime, function() {
         self.emit('initiate-gameplay');
       });
     });

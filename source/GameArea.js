@@ -38,6 +38,7 @@ function GameArea(canvas) {
   this.blockArea = this.createBlockAreaObject();
   this.dangerZone = this.createDangerZoneObject();
   this.instructionSteps = null;
+  this.levelTimeText = null;
   this.instructions = this.createInstructionsObject();
 }
 inherit(GameArea, EventEmitter);
@@ -208,9 +209,13 @@ GameArea.prototype.createInstructionsObject = function() {
     align: 'center',
     fill: '#222',
     text: '30 seconds each',
-    font: (dpr * 24) + 'px ' + canvas.font
+    font: (dpr * 24) + 'px ' + canvas.font,
+    setTime: function(time) {
+      this.text = time + ' seconds each';
+    }
   });
   instructionSteps[1].addChild(timeText2);
+  this.levelTimeText = timeText2;
 
   var readyText = stage.display.text({
     x: instructionSteps[2].width / 2, y: 0,
@@ -277,10 +282,12 @@ GameArea.prototype.setScores = function(scores) {
 /**
  * Show the instructions.
  *
+ * @param {number} levelTime The number of seconds each level is.
  * @param {function=} opt_callback Optional callback that triggers when the
  *     animation is completed.
  */
-GameArea.prototype.showInstructions = function(opt_callback) {
+GameArea.prototype.showInstructions = function(levelTime, opt_callback) {
+  this.levelTimeText.setTime(levelTime);
   this.canvasObject.addChild(this.instructions);
   this.showInstructionStep(0, opt_callback);
 };
