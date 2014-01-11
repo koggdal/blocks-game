@@ -42,7 +42,7 @@ function Menu(options) {
   this.itemObjects = [];
   this.isAnimating = false;
 
-  var items = options.items;
+  var items = this.items;
   for (var i = 0, l = items.length; i < l; i++) {
     var item = items[i];
     this.itemObjects.push(this.createItemObject(i, {
