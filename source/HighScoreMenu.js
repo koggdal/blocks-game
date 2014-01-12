@@ -375,9 +375,13 @@ HighScoreMenu.prototype.createRealInput = function() {
   input.id = 'name-input';
   input.maxlength = 10;
   input.placeholder = 'Enter Name';
+  var doneTyping = false;
 
   input.addEventListener('keydown', function(event) {
     if ((event.key || event.which || event.keyCode) === 13) {
+      if (doneTyping) return;
+      doneTyping = true;
+      setTimeout(function() { doneTyping = false; }, 500);
       self.switchToFakeInput(this.value);
       self.saveHighScore();
     }
@@ -385,6 +389,9 @@ HighScoreMenu.prototype.createRealInput = function() {
 
   input.addEventListener('blur', function(event) {
     if (this.value !== '') {
+      if (doneTyping) return;
+      doneTyping = true;
+      setTimeout(function() { doneTyping = false; }, 500);
       self.switchToFakeInput(this.value);
       self.saveHighScore();
     }
