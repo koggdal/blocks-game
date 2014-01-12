@@ -194,6 +194,7 @@ Menu.prototype.createItemObject = function(index, options) {
  */
 Menu.prototype.show = function(parentObject, opt_callback) {
   var self = this;
+  this.emit('before:show');
   this.isAnimating = true;
   parentObject.addChild(this.canvasObject);
   this.canvasObject.animate({
@@ -203,6 +204,7 @@ Menu.prototype.show = function(parentObject, opt_callback) {
     duration: 500,
     callback: function() {
       self.isAnimating = false;
+      self.emit('show');
       if (opt_callback) opt_callback();
     }
   });
@@ -215,6 +217,7 @@ Menu.prototype.show = function(parentObject, opt_callback) {
  */
 Menu.prototype.hide = function(opt_callback) {
   var self = this;
+  this.emit('before:hide');
   this.isAnimating = true;
   this.canvasObject.animate({
     x: -this.canvas.stage.width
@@ -224,6 +227,7 @@ Menu.prototype.hide = function(opt_callback) {
     callback: function() {
       self.canvasObject.remove();
       self.isAnimating = false;
+      self.emit('hide');
       if (opt_callback) opt_callback();
     }
   });
