@@ -153,6 +153,8 @@ BlockController.prototype.addBlock = function() {
   var isScoreBlock = this.getRandomInt(0, 10) % 6 ? true : false;
   var object = isScoreBlock ? this.scorePool.get() : this.dangerPool.get();
 
+  object.canvasObject.opacity = 1;
+
   var column;
   while (!column || column === this.lastColumn) {
     column = this.getRandomInt(1, this.numColumns);
@@ -194,6 +196,13 @@ BlockController.prototype.removeBlock = function(block, opt_index) {
  * @param {module:Block~Block} block A Block instance.
  */
 BlockController.prototype.onClick = function(block) {
+  var self = this;
+
+  // If the block is already sent for removal, don't do anything.
+  if (block.isAnimatingRemove) {
+    return;
+  }
+
   if (block instanceof ScoreBlock) {
     this.emit('scoreblock-click');
     if (++this.increaseSpeedStep === this.increaseSpeedEvery) {
@@ -217,7 +226,15 @@ BlockController.prototype.onClick = function(block) {
   } else {
     this.emit('dangerblock-click');
   }
-  this.removeBlock(block);
+  block.isAnimatingRemove = true;
+  block.canvasObject.animate({opacity: 0}, {
+    easing: 'ease-out-cubic',
+    duration: 100,
+    callback: function() {
+      block.isAnimatingRemove = false;
+      self.removeBlock(block);
+    }
+  });
 };
 
 /**
@@ -226,6 +243,7 @@ BlockController.prototype.onClick = function(block) {
  * zone.
  */
 BlockController.prototype.gameTick = function() {
+  var self = this;
   var blocks = this.blocks;
   var speed = this.blockSpeed;
   var dpr = this.canvas.dpr;
@@ -233,16 +251,30 @@ BlockController.prototype.gameTick = function() {
 
   for (var i = 0, l = blocks.length; i < l; i++) {
     var block = blocks[i];
+    if (!block) continue;
     block.canvasObject.y += speed * dpr;
 
-    if (block.canvasObject.y > dangerZonePosition) {
-      if (block instanceof ScoreBlock) {
-        this.emit('scoreblock-reach-end');
-      } else if (block instanceof DangerBlock) {
-        this.emit('dangerblock-reach-end');
+    if (block.canvasObject.y + block.canvasObject.height > dangerZonePosition) {
+      if (!block.isAnimatingRemove) {
+        (function(block) {
+          block.isAnimatingRemove = true;
+          block.canvasObject.animate({opacity: 0}, {
+            easing: 'ease-out-cubic',
+            duration: 300,
+            callback: function() {
+              block.isAnimatingRemove = false;
+
+              if (block instanceof ScoreBlock) {
+                self.emit('scoreblock-reach-end');
+              } else if (block instanceof DangerBlock) {
+                self.emit('dangerblock-reach-end');
+              }
+
+              self.removeBlock(block);
+            }
+          });
+        }(block));
       }
-      this.removeBlock(block, i);
-      i--; l--;
     }
   }
 };
