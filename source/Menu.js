@@ -110,7 +110,7 @@ Menu.prototype.createSubtitleObject = function() {
 
   var object = stage.display.text({
     x: menu.width / 2,
-    y: menu.height / 2 - dpr * 75,
+    y: menu.height / 2 - dpr * (75 - this.offset),
     origin: {x: 'center', y: 'center'},
     align: 'center',
     fill: '#222',
