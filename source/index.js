@@ -12,6 +12,7 @@ var controller = new GameController();
 
 // Tell the controller about the canvas where the game is rendered
 var canvas = controller.canvas = new Canvas('#canvas');
+var optimalHeightDiff = canvas.optimalHeight - canvas.height;
 
 // Create the three menus needed in the game:
 // mainMenu: Displayed when the game is launched.
@@ -34,8 +35,8 @@ controller.pauseMenu = new Menu({
   offset: 40,
   items: [
     ['resume', 'Resume', '#0aa', '#2cc'],
-    ['restart', 'Restart', '#a22', '#c44', 40],
-    ['main-menu', 'Main Menu', '#222', '#444', 70]
+    ['restart', 'Restart', '#a22', '#c44', 40 - Math.round(optimalHeightDiff / 4)],
+    ['main-menu', 'Main Menu', '#222', '#444', 70 - Math.round(optimalHeightDiff / 2)]
   ]
 });
 controller.continueMenu = new Menu({
@@ -43,10 +44,11 @@ controller.continueMenu = new Menu({
   id: 'continue',
   title: 'Time\'s Up',
   subtitle: '',
+  offset: optimalHeightDiff / 8,
   items: [
-    ['continue', 'Next Level', '#0aa', '#2cc', 20],
-    ['restart', 'Restart', '#a22', '#c44', 50],
-    ['main-menu', 'Main Menu', '#222', '#444', 80]
+    ['continue', 'Next Level', '#0aa', '#2cc', 20 + Math.round(optimalHeightDiff / 5)],
+    ['restart', 'Restart', '#a22', '#c44', 50 - Math.round(optimalHeightDiff / 20)],
+    ['main-menu', 'Main Menu', '#222', '#444', 80 - Math.round(optimalHeightDiff / 4)]
   ]
 });
 controller.highScoreMenu = new HighScoreMenu(canvas);

@@ -40,11 +40,13 @@ var json = require('./utils/json');
  * @param {module:Canvas~Canvas} canvas A Canvas instance.
  */
 function HighScoreMenu(canvas) {
+  var optimalHeightDiff = canvas.optimalHeight - canvas.height;
+
   Menu.call(this, {
     canvas: canvas,
     id: 'gameover',
     title: 'Game Over',
-    offset: -30,
+    offset: -30 + optimalHeightDiff / 2,
     items: [
       ['main-menu', 'Main Menu', '#222', '#444'],
       ['restart', 'Restart', '#0aa', '#2cc']
@@ -93,10 +95,12 @@ HighScoreMenu.prototype.createHighScoreObject = function() {
   var dpr = canvas.dpr;
   var view = this.canvasObject;
 
-  var offset = dpr * 20;
+  var optimalHeightDiff = canvas.optimalHeight - canvas.height;
+  var offsetY = dpr * (220 - optimalHeightDiff / 2);
+  var offsetX = dpr * 20;
   var object = stage.display.rectangle({
-    x: offset, y: dpr * 220,
-    width: view.width - offset * 2,
+    x: offsetX, y: offsetY,
+    width: view.width - offsetX * 2,
     height: dpr * 200
   });
   view.addChild(object);
@@ -109,11 +113,14 @@ HighScoreMenu.prototype.createHighScoreObject = function() {
  * This is so that the game over view can fit a small high score list.
  */
 HighScoreMenu.prototype.repositionMenuItems = function() {
-  var dpr = this.canvas.dpr;
+  var canvas = this.canvas;
+  var dpr = canvas.dpr;
   var view = this.canvasObject;
 
-  var bottomOffset = dpr * 40;
+  var optimalHeightDiff = canvas.optimalHeight - canvas.height;
+
   var sideOffset = dpr * 10;
+  var bottomOffset = Math.max(sideOffset, dpr * (40 - optimalHeightDiff / 2));
   var buttonWidth = Math.round(view.width / 2.2);
 
   var mainMenu = this.itemObjects[0];
@@ -229,7 +236,9 @@ HighScoreMenu.prototype.createHighScoreItem = function(index) {
   parent.addChild(scoreText);
 
   this.highScoreItemObjects.push({
-    offset: (parent.y + nameText.y - itemHeight / 2 - 3) / dpr,
+    getOffset: function() {
+      return (parent.y + nameText.y - itemHeight / 2 - 3) / dpr;
+    },
     setName: function(name) {
       nameText.text = prepareName(name);
       parent.redraw();
@@ -269,17 +278,20 @@ HighScoreMenu.prototype.setMode = function(mode) {
   var dpr = canvas.dpr;
   var view = this.canvasObject;
 
+  var optimalHeightDiff = canvas.optimalHeight - canvas.height;
+
   if (mode === 'game-over') {
     this.titleObject.text = 'Game Over';
     this.subtitleObject.opacity = 1;
-    this.highScoreObject.y = dpr * 220;
+    this.subtitleObject.y = view.height / 2 - dpr * (75 - this.offset + optimalHeightDiff / 5);
+    this.highScoreObject.y = dpr * (220 - optimalHeightDiff / 2.5);
     this.itemObjects[1].children[0].text = 'Restart';
   }
 
   if (mode === 'high-scores') {
     this.titleObject.text = 'High Scores';
     this.subtitleObject.opacity = 0;
-    this.highScoreObject.y = dpr * 190;
+    this.highScoreObject.y = dpr * (190 - optimalHeightDiff / 2.5);
     this.itemObjects[1].children[0].text = 'Play';
   }
 };
@@ -393,7 +405,7 @@ HighScoreMenu.prototype.createRealInput = function() {
  */
 HighScoreMenu.prototype.showRealInput = function(item) {
   this.inputElement.value = '';
-  this.inputElement.style.top = item.offset + 'px';
+  this.inputElement.style.top = item.getOffset() + 'px';
   this.inputElement.className = 'visible';
   this.inputElement.focus();
   this.realInputVisible = true;

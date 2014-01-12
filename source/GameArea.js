@@ -31,8 +31,10 @@ var inherit = require('./utils/inherit');
 function GameArea(canvas) {
   EventEmitter.call(this);
 
+  var optimalHeightDiff = canvas.optimalHeight - canvas.height;
+
   this.canvas = canvas;
-  this.dangerZoneStepSize = 60;
+  this.dangerZoneStepSize = 60 - Math.round(optimalHeightDiff / 5.5);
   this.dangerZonePosition = 0;
   this.canvasObject = this.createGameAreaObject();
   this.blockArea = this.createBlockAreaObject();
@@ -245,7 +247,7 @@ GameArea.prototype.setDangerZoneSize = function(multiplier) {
 
   this.dangerZone.animate({
     height: height,
-    y: stage.height - height
+    y: Math.round(stage.height - height)
   }, {
     easing: 'ease-out-cubic',
     duration: 500

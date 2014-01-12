@@ -9,6 +9,8 @@
  * @property {HTMLCanvasElement} element The canvas element.
  * @property {number} width The width of the canvas in CSS pixels.
  * @property {number} height The height of the canvas in CSS pixels.
+ * @property {number} optimalWidth The optimal width if the screen fits it.
+ * @property {number} optimalHeight The optimal height if the screen fits it.
  * @property {number} dpr The device pixel ratio, 1 for a normal display.
  * @property {Object} stage The oCanvas core instance.
  * @property {string} font The font family used throughout the game.
@@ -35,7 +37,13 @@ function Canvas(element) {
   this.stage = null;
   this.font = 'Squada One, sans-serif';
 
-  this.setSize(this.element.width, this.element.height);
+  this.optimalWidth = this.element.width;
+  this.optimalHeight = this.element.height;
+
+  var width = Math.min(this.element.width, window.innerWidth);
+  var height = Math.min(this.element.height, window.innerHeight);
+
+  this.setSize(width, height);
   this.createStage();
 
   this.isTouch = this.stage.touch.isTouch;
@@ -54,6 +62,13 @@ Canvas.prototype.setSize = function(width, height) {
   this.element.style.height = height + 'px';
   this.element.width = width * this.dpr;
   this.element.height = height * this.dpr;
+
+  var parent = this.element.parentNode;
+  if (parent) {
+    parent.style.width = width + 'px';
+    parent.style.height = height + 'px';
+    parent.style.marginTop = (-height / 2) + 'px';
+  }
 
   this.width = width;
   this.height = height;
