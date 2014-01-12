@@ -17,6 +17,8 @@ var inherit = require('./utils/inherit');
  *     menu.
  * @property {module:Menu~Menu} continueMenu The Menu instance used for the
  *     continue menu.
+ * @property {module:HighScoreMenu~HighScoreMenu} highScoreMenu The Menu
+ *     instance used for the high score view.
  * @property {module:Dashboard~Dashboard} dashboard The dashboard.
  * @property {module:GameArea~GameArea} gameArea The game area.
  * @property {module:BlockController~BlockController} blockController The
@@ -36,6 +38,7 @@ function GameController() {
   this.mainMenu = null;
   this.pauseMenu = null;
   this.continueMenu = null;
+  this.highScoreMenu = null;
   this.dashboard = null;
   this.gameArea = null;
   this.blockController = null;
@@ -74,6 +77,7 @@ GameController.prototype.initializeGame = function() {
     var self = this;
     setTimeout(function() {
       self.mainMenu.show(self.canvas.stage);
+      self.highScoreMenu.getHighScores();
     }, 1000);
   }
 };
@@ -90,6 +94,12 @@ GameController.prototype.addMenus = function() {
         self.emit('action:start-new-game');
         self.mainMenu.hide(function() {
           self.emit('start-new-game');
+        });
+      }
+      if (event.id === 'high-scores') {
+        self.emit('action:go-highscores');
+        self.mainMenu.hide(function() {
+          self.emit('go-highscores');
         });
       }
       if (event.id === 'play-level') {
@@ -159,12 +169,7 @@ GameController.prototype.addMenus = function() {
       });
     });
     this.on('stop-level', function() {
-      if (self.level === self.totalLevels) {
-        self.dashboard.hidePauseButton();
-        self.gameOverMenu.subtitle = self.score;
-        self.gameOverMenu.subtitleObject.text = self.score + ' points';
-        self.gameOverMenu.show(self.canvas.stage);
-      } else {
+      if (self.level < self.totalLevels) {
         var levelsLeft = self.totalLevels - self.level;
         self.continueMenu.subtitle = levelsLeft + ' ' + (levelsLeft === 1 ? 'level' : 'levels') + ' left';
         self.continueMenu.subtitleObject.text =  self.continueMenu.subtitle;
@@ -173,12 +178,12 @@ GameController.prototype.addMenus = function() {
     });
   }
 
-  if (this.gameOverMenu) {
-    this.gameOverMenu.on('click', function(event) {
+  if (this.highScoreMenu) {
+    this.highScoreMenu.on('click', function(event) {
       if (event.id === 'restart') {
         self.emit('action:reset-game');
         self.emit('action:restart-game');
-        self.gameOverMenu.hide(function() {
+        self.highScoreMenu.hide(function() {
           self.emit('reset-game');
           self.emit('restart-game');
         });
@@ -186,10 +191,40 @@ GameController.prototype.addMenus = function() {
       if (event.id === 'main-menu') {
         self.emit('action:reset-game');
         self.emit('action:go-mainmenu');
-        self.gameOverMenu.hide(function() {
+        self.highScoreMenu.hide(function() {
           self.emit('reset-game');
           if (self.mainMenu) self.mainMenu.show(self.canvas.stage);
         });
+      }
+    });
+
+    this.on('go-mainmenu', function() {
+      self.highScoreMenu.getHighScores();
+    });
+
+    this.on('action:go-highscores', function() {
+      self.highScoreMenu.getHighScores();
+    });
+
+    this.on('go-highscores', function() {
+      self.highScoreMenu.setMode('high-scores');
+      self.highScoreMenu.show(self.canvas.stage);
+    });
+
+    this.on('start-new-game', function() {
+      self.highScoreMenu.setMode('game-over');
+    });
+
+    this.on('soon-stop-level', function() {
+      if (self.level === self.totalLevels) {
+        self.highScoreMenu.getHighScores();
+      }
+    });
+
+    this.on('stop-level', function() {
+      if (self.level === self.totalLevels) {
+        self.highScoreMenu.setScore(self.score);
+        self.highScoreMenu.show(self.canvas.stage);
       }
     });
   }
@@ -230,6 +265,9 @@ GameController.prototype.addDashboard = function() {
     });
     this.on('stop-level', function() {
       self.dashboard.emit('stop-level');
+      if (self.level === self.totalLevels) {
+        self.dashboard.hidePauseButton();
+      }
     });
     this.on('action:start-next-level', function() {
       self.dashboard.emit('resume-game');
@@ -364,6 +402,7 @@ GameController.prototype.createTimer = function() {
   var self = this;
   var startTime = null;
   var lastTime = null;
+  var hasSentSoonOver = false;
   var rafID;
 
   this.startTimer = function() {
@@ -382,6 +421,7 @@ GameController.prototype.createTimer = function() {
   };
   this.resetTimer = function() {
     self.levelProgress = 0;
+    hasSentSoonOver = false;
     if (self.dashboard) {
       self.dashboard.setTimerProgress(0);
     }
@@ -398,6 +438,11 @@ GameController.prototype.createTimer = function() {
 
     if (self.dashboard) {
       self.dashboard.setTimerProgress(progress);
+    }
+
+    if (!hasSentSoonOver && progress > 0.8) {
+      hasSentSoonOver = true;
+      self.emit('soon-stop-level');
     }
 
     if (progress >= 1) {
