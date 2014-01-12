@@ -24,8 +24,7 @@ controller.mainMenu = new Menu({
   offset: 50,
   items: [
     ['play', 'Play', '#0aa', '#2cc'],
-    ['high-scores', 'High Scores', '#222', '#444'],
-    ['play-level', 'Play Level', '#222', '#444']
+    ['high-scores', 'High Scores', '#222', '#444']
   ]
 });
 controller.pauseMenu = new Menu({
