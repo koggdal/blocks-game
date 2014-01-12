@@ -15,6 +15,15 @@ body {
 	display: block;
 	width: 320px;
 	height: 548px;
+	background: url('../images/iphone-5-startup.png');
+	background-size: cover;
+}
+#canvas {
+	opacity: 0;
+	-webkit-transition: 300ms opacity;
+}
+#canvas.loaded {
+	opacity: 1;
 }
 
 #name-input {

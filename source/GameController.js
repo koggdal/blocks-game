@@ -76,6 +76,7 @@ GameController.prototype.initializeGame = function() {
     // Use a timer to let the font load
     var self = this;
     setTimeout(function() {
+      self.canvas.element.className += ' loaded';
       self.mainMenu.show(self.canvas.stage);
       self.highScoreMenu.getHighScores();
     }, 1000);
