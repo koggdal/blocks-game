@@ -42,6 +42,7 @@ function GameController() {
   this.dashboard = null;
   this.gameArea = null;
   this.blockController = null;
+  this.soundManager = null;
 
   this.isGameInProgress = false;
   this.isPaused = false;
@@ -69,6 +70,7 @@ GameController.prototype.initializeGame = function() {
   this.addMenus();
   this.addDashboard();
   this.addBlockController();
+  this.addMusic();
   this.setupKeyEvents();
   this.createTimer();
 
@@ -384,6 +386,32 @@ GameController.prototype.addBlockController = function() {
     });
     this.blockController.on('dangerblock-click', function() {
       self.emit('score-decrease', {amount: -self.dangerBlockScore});
+    });
+  }
+};
+
+/**
+ * Add music to the game.
+ */
+GameController.prototype.addMusic = function() {
+  if (this.soundManager) {
+    this.soundManager.addSoundFile('music', {
+      'audio/mpeg': 'sounds/music.mp3',
+      'audio/ogg': 'sounds/music.ogg'
+    });
+    this.on('initiate-gameplay', function() {
+      this.soundManager.stop('music');
+      this.soundManager.play('music');
+    });
+    this.on('start-next-level', function() {
+      this.soundManager.stop('music');
+      this.soundManager.play('music');
+    });
+    this.on('pause-game', function() {
+      this.soundManager.pause('music');
+    });
+    this.on('resume-game', function() {
+      this.soundManager.play('music');
     });
   }
 };

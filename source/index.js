@@ -6,6 +6,7 @@ var HighScoreMenu = require('./HighScoreMenu');
 var Dashboard = require('./Dashboard');
 var GameArea = require('./GameArea');
 var BlockController = require('./BlockController');
+var SoundManager = require('./SoundManager');
 var iphone = require('./utils/iphone');
 
 if (iphone.isSafariApp) {
@@ -68,6 +69,9 @@ if (iphone.isSafariApp) {
 
   // The controller needs to know about the block controller to spawn new blocks
   controller.blockController = new BlockController(canvas);
+
+  // The controller needs to know about the sound manager to control the sounds
+  controller.soundManager = new SoundManager();
 
   // The controller now knows all about the game, so let's roll!
   controller.initializeGame();
