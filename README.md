@@ -40,7 +40,7 @@ If you make changes to the code and want to see them in the game, you need to bu
 
     grunt dev
 
-Then you reload the browser and see the changes. The grunt build steps use a build tool called QuickStart (not officially released yet). It has the ability to build a CommonJS project into a single JS file, but it can also build it all at runtime in the browser. The `prod` mode builds it in node.js and the `dev` mode builds it when running it in the browser. In the dev mode, the main.js file is a starter for QuickStart itself so it can start building the game, and finally run it. This means you run the `grunt dev` command to get the correct main.js file, and then make changes and see them immediately on browser reload.
+Then you reload the browser and see the changes. The grunt build steps use a build tool called [QuickStart](https://github.com/spotify/quickstart). It has the ability to build a CommonJS project into a single JS file, but it can also build it all at runtime in the browser. The `prod` mode builds it in node.js and the `dev` mode builds it when running it in the browser. In the dev mode, the main.js file is a starter for QuickStart itself so it can start building the game, and finally run it. This means you run the `grunt dev` command to get the correct main.js file, and then make changes and see them immediately on browser reload.
 
 ### Generate documentation based on JSDoc
 

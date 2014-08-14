@@ -1,3 +1,4 @@
-.jshintrc
-docs
-main.js
+/.jshintrc
+/docs
+/main.js
+/node_modules

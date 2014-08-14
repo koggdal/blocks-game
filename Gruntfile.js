@@ -1,3 +1,7 @@
+'use strict';
+
+var pathogen = require('pathogen');
+
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -7,12 +11,12 @@ module.exports = function(grunt) {
     exec: {
       'quickstart-dev': {
         cmd: function() {
-          return './node_modules/quickstart/quickstart --self > ./main.js';
+          return pathogen.sys('./node_modules/.bin/quickstart') + ' --self > ./main.js';
         }
       },
       'quickstart-prod': {
         cmd: function() {
-          return './node_modules/quickstart/quickstart --compress > ./main.js';
+          return pathogen.sys('./node_modules/.bin/quickstart') + ' --compress > ./main.js';
         }
       },
       'jsdoc': {
